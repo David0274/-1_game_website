@@ -1,0 +1,1547 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NeonArcade — Free Unblocked Games</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+:root{
+  --bg:#0d1117;--card:#161b27;--card2:#1c2233;
+  --border:rgba(255,255,255,0.07);
+  --accent:#a78bfa;--accent2:#38bdf8;--accent3:#fb923c;--accent4:#34d399;
+  --text:#f1f5f9;--muted:#64748b;--radius:14px;
+}
+body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;position:relative;}
+#bg-canvas{position:fixed;inset:0;z-index:0;pointer-events:none;}
+body::after{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(167,139,250,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(167,139,250,0.03) 1px,transparent 1px);background-size:60px 60px;z-index:0;pointer-events:none;}
+header,main,footer,.modal-overlay{position:relative;z-index:10}
+
+/* HEADER */
+header{backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);background:rgba(13,17,23,0.8);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:200;}
+.header-inner{max-width:1400px;margin:0 auto;display:flex;align-items:center;gap:1.2rem;padding:0 1.5rem;height:62px;}
+.logo{font-family:'Orbitron',monospace;font-size:1.15rem;font-weight:900;text-decoration:none;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;flex-shrink:0;letter-spacing:.05em;display:flex;align-items:center;gap:.45rem;}
+.logo em{font-style:normal;-webkit-text-fill-color:var(--accent3);}
+.header-logo-img{width:38px;height:38px;object-fit:contain;flex-shrink:0;filter:drop-shadow(0 0 6px rgba(220,50,50,.5)) drop-shadow(0 0 10px rgba(100,220,50,.35));-webkit-text-fill-color:unset;}
+nav{display:flex;gap:.1rem;flex-wrap:wrap;}
+nav a{font-size:.78rem;font-weight:800;color:var(--muted);text-decoration:none;padding:.35rem .7rem;border-radius:7px;transition:all .2s;text-transform:uppercase;letter-spacing:.05em;white-space:nowrap;}
+nav a:hover{color:var(--text);background:rgba(255,255,255,.07);}
+nav a.active{color:var(--accent);background:rgba(167,139,250,.12);}
+.search-wrap{margin-left:auto;display:flex;align-items:center;gap:.6rem;background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:50px;padding:.4rem .9rem;transition:border-color .2s,box-shadow .2s;flex-shrink:0;}
+.search-wrap:focus-within{border-color:var(--accent);box-shadow:0 0 0 3px rgba(167,139,250,.2);}
+.search-wrap input{background:none;border:none;outline:none;color:var(--text);font-family:'Nunito',sans-serif;font-size:.88rem;width:170px;}
+.search-wrap input::placeholder{color:var(--muted);}
+#ddgBtn{background:rgba(255,255,255,.06);border:1px solid var(--border);color:var(--text);border-radius:50px;width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-size:.9rem;cursor:pointer;flex-shrink:0;transition:all .18s;padding:0;}
+#ddgBtn:hover{background:rgba(238,140,52,.18);border-color:rgba(238,140,52,.5);transform:scale(1.08);}
+
+/* WEB SEARCH PANEL */
+.web-search-panel{position:fixed;inset:0;background:rgba(0,0,0,.88);backdrop-filter:blur(14px);z-index:600;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .25s;}
+.web-search-panel.open{opacity:1;pointer-events:all;}
+.wsp-inner{width:min(700px,94vw);max-height:88vh;background:var(--card);border:1px solid rgba(167,139,250,.2);border-radius:18px;overflow:hidden;display:flex;flex-direction:column;transform:translateY(24px) scale(.97);transition:transform .25s ease;box-shadow:0 40px 80px rgba(0,0,0,.7),0 0 0 1px rgba(167,139,250,.1);}
+.web-search-panel.open .wsp-inner{transform:none;}
+.wsp-header{display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:.85rem 1.1rem;background:rgba(255,255,255,.03);border-bottom:1px solid var(--border);flex-shrink:0;}
+.wsp-title{font-size:.9rem;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.wsp-body{padding:1.3rem;overflow-y:auto;flex:1;min-height:160px;}
+.wsp-loading{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1rem;padding:3rem 1rem;color:var(--muted);font-weight:700;font-size:.9rem;}
+.wsp-answer{display:flex;gap:1rem;align-items:flex-start;margin-bottom:1.2rem;padding-bottom:1.2rem;border-bottom:1px solid var(--border);}
+.wsp-answer img{width:64px;height:64px;border-radius:10px;object-fit:cover;flex-shrink:0;background:rgba(255,255,255,.04);}
+.wsp-answer-text h3{font-size:1.05rem;font-weight:900;margin-bottom:.4rem;}
+.wsp-answer-text p{font-size:.86rem;color:var(--text);line-height:1.6;opacity:.9;}
+.wsp-answer-text a{color:var(--accent2);font-size:.78rem;font-weight:700;text-decoration:none;display:inline-block;margin-top:.5rem;}
+.wsp-answer-text a:hover{text-decoration:underline;}
+.wsp-related-title{font-size:.75rem;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);margin-bottom:.7rem;}
+.wsp-related-item{display:block;padding:.6rem .7rem;border-radius:9px;text-decoration:none;color:var(--text);font-size:.84rem;font-weight:600;transition:background .15s;margin-bottom:.3rem;line-height:1.5;}
+.wsp-related-item:hover{background:rgba(167,139,250,.1);}
+.wsp-related-item b{color:var(--accent);}
+.wsp-empty{text-align:center;padding:2.5rem 1rem;color:var(--muted);}
+.wsp-empty p{margin-bottom:1rem;font-size:.9rem;}
+.wsp-fulllink{display:inline-flex;align-items:center;gap:.5rem;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;text-decoration:none;font-weight:800;font-size:.85rem;padding:.65rem 1.3rem;border-radius:10px;transition:all .2s;}
+.wsp-fulllink:hover{transform:translateY(-1px);box-shadow:0 8px 24px rgba(167,139,250,.35);}
+.wsp-footer-link{display:block;text-align:center;margin-top:1.2rem;padding-top:1rem;border-top:1px solid var(--border);}
+
+/* NOTICE */
+.notice{background:linear-gradient(90deg,rgba(167,139,250,.9),rgba(56,189,248,.9));padding:.4rem 1.5rem;text-align:center;font-size:.72rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#fff;overflow:hidden;}
+.notice-inner{display:inline-flex;gap:4rem;white-space:nowrap;animation:marquee 26s linear infinite;}
+@keyframes marquee{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+
+/* HERO */
+.hero{max-width:1400px;margin:0 auto;padding:3rem 1.5rem 1.5rem;text-align:center;}
+.hero-badge{display:inline-flex;align-items:center;gap:.5rem;background:rgba(167,139,250,.1);border:1px solid rgba(167,139,250,.25);border-radius:50px;padding:.28rem .9rem;font-size:.72rem;font-weight:800;color:var(--accent);letter-spacing:.1em;text-transform:uppercase;margin-bottom:1rem;}
+.live-dot{width:7px;height:7px;border-radius:50%;background:var(--accent4);animation:livepulse 1.4s ease-in-out infinite;}
+@keyframes livepulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.3;transform:scale(.6)}}
+.hero h1{font-size:clamp(1.8rem,4vw,3.2rem);font-weight:900;line-height:1.15;margin-bottom:.8rem;letter-spacing:-.02em;}
+.hero h1 span{background:linear-gradient(135deg,var(--accent),var(--accent2),var(--accent4));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.hero p{font-size:.98rem;color:var(--muted);max-width:480px;margin:0 auto 1.5rem;line-height:1.7;}
+.hero-stats{display:flex;justify-content:center;gap:2rem;flex-wrap:wrap;}
+.stat{display:flex;flex-direction:column;gap:.15rem;align-items:center;}
+.stat-n{font-family:'Orbitron',monospace;font-size:1.4rem;font-weight:900;background:linear-gradient(to right,var(--text),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.stat-l{font-size:.68rem;color:var(--muted);font-weight:800;letter-spacing:.1em;text-transform:uppercase;}
+
+/* CATS */
+.cats-wrap{max-width:1400px;margin:0 auto;padding:.5rem 1.5rem 1.2rem;display:flex;gap:.5rem;flex-wrap:wrap;}
+.cat-btn{display:flex;align-items:center;gap:.35rem;background:var(--card);border:1px solid var(--border);border-radius:50px;padding:.4rem .9rem;font-size:.78rem;font-weight:800;color:var(--muted);cursor:pointer;transition:all .2s;white-space:nowrap;font-family:'Nunito',sans-serif;}
+.cat-btn:hover,.cat-btn.active{color:var(--text);border-color:var(--accent);background:rgba(167,139,250,.12);box-shadow:0 0 14px rgba(167,139,250,.18);}
+.cat-btn.active{color:var(--accent);}
+
+/* SECTION */
+.section{max-width:1400px;margin:0 auto;padding:0 1.5rem 3rem;}
+.sec-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.1rem;}
+.sec-title{font-family:'Nunito',sans-serif;font-size:1rem;font-weight:900;letter-spacing:.04em;text-transform:uppercase;display:flex;align-items:center;gap:.6rem;}
+.sec-title::before{content:'';width:4px;height:1.1em;border-radius:2px;background:linear-gradient(var(--accent),var(--accent2));display:block;}
+.count-badge{font-size:.7rem;font-weight:800;background:rgba(167,139,250,.15);color:var(--accent);border-radius:50px;padding:.15rem .55rem;}
+
+/* GRID */
+.games-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(185px,1fr));gap:.9rem;}
+.game-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;cursor:pointer;transition:all .22s ease;animation:fadeUp .4s ease both;position:relative;}
+.game-card:hover{transform:translateY(-5px) scale(1.01);border-color:rgba(167,139,250,.4);box-shadow:0 14px 44px rgba(0,0,0,.5),0 0 0 1px rgba(167,139,250,.2),0 0 36px rgba(167,139,250,.06);background:var(--card2);}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+.thumb{width:100%;aspect-ratio:16/10;position:relative;overflow:hidden;background:#0a0d14;}
+.thumb img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .35s ease;}
+.game-card:hover .thumb img{transform:scale(1.07);}
+.thumb-overlay{position:absolute;inset:0;background:rgba(13,17,23,0);transition:background .2s;display:flex;align-items:center;justify-content:center;}
+.game-card:hover .thumb-overlay{background:rgba(13,17,23,.55);}
+.play-ico{width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:1rem;opacity:0;transform:scale(.7);transition:all .2s;box-shadow:0 0 22px rgba(167,139,250,.5);}
+.game-card:hover .play-ico{opacity:1;transform:scale(1);}
+.hot-tag,.new-tag,.top-tag,.horror-tag{position:absolute;top:.5rem;left:.5rem;font-size:.58rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;padding:.18rem .45rem;border-radius:4px;z-index:2;}
+.hot-tag{background:rgba(251,146,60,.92);color:#fff;}
+.new-tag{background:rgba(52,211,153,.92);color:#fff;}
+.top-tag{background:rgba(56,189,248,.92);color:#fff;}
+.horror-tag{background:rgba(200,50,50,.92);color:#fff;}
+.game-info{padding:.7rem .85rem .8rem;}
+.game-name{font-size:.85rem;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:.28rem;}
+.game-meta{display:flex;align-items:center;justify-content:space-between;font-size:.68rem;color:var(--muted);font-weight:700;}
+.game-tag{background:rgba(167,139,250,.1);color:var(--accent);border-radius:4px;padding:.1rem .38rem;font-size:.6rem;font-weight:800;text-transform:uppercase;letter-spacing:.04em;}
+.plays{display:flex;align-items:center;gap:.2rem;}
+
+#no-results{display:none;text-align:center;padding:4rem 2rem;color:var(--muted);font-size:1.1rem;font-weight:700;}
+
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.92);backdrop-filter:blur(14px);z-index:500;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .25s;}
+.modal-overlay.open{opacity:1;pointer-events:all;}
+.game-modal{width:min(1140px,97vw);background:var(--card);border:1px solid rgba(167,139,250,.2);border-radius:18px;overflow:hidden;display:flex;flex-direction:column;max-height:96vh;transform:translateY(26px) scale(.97);transition:transform .25s ease;box-shadow:0 40px 80px rgba(0,0,0,.7),0 0 0 1px rgba(167,139,250,.1);}
+.modal-overlay.open .game-modal{transform:none;}
+.modal-topbar{display:flex;align-items:center;gap:.8rem;padding:.7rem 1rem;background:rgba(255,255,255,.03);border-bottom:1px solid var(--border);flex-shrink:0;}
+.modal-title{font-size:.92rem;font-weight:900;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.modal-tag-badge{font-size:.62rem;font-weight:800;letter-spacing:.07em;text-transform:uppercase;padding:.18rem .55rem;border-radius:4px;background:rgba(167,139,250,.15);color:var(--accent);flex-shrink:0;}
+.topbar-right{display:flex;align-items:center;gap:.5rem;margin-left:auto;}
+.tb-btn{display:flex;align-items:center;gap:.3rem;padding:.38rem .8rem;border-radius:7px;border:none;font-family:'Nunito',sans-serif;font-size:.78rem;font-weight:800;cursor:pointer;transition:all .18s;}
+.btn-fs{background:rgba(167,139,250,.15);color:var(--accent);}
+.btn-fs:hover{background:rgba(167,139,250,.25);}
+.btn-close{background:rgba(255,80,80,.15);color:#f87171;}
+.btn-close:hover{background:rgba(255,80,80,.28);}
+.iframe-wrap{position:relative;flex:1;min-height:0;background:#000;}
+.iframe-wrap iframe{width:100%;height:100%;min-height:560px;border:none;display:block;}
+.iframe-loading{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1rem;background:var(--card);font-size:.9rem;font-weight:700;color:var(--muted);transition:opacity .3s;}
+.spinner{width:42px;height:42px;border-radius:50%;border:3px solid rgba(167,139,250,.15);border-top-color:var(--accent);animation:spin .8s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg)}}
+.modal-footer{display:flex;align-items:flex-start;gap:1rem;padding:.85rem 1rem;border-top:1px solid var(--border);background:rgba(255,255,255,.02);flex-shrink:0;}
+.modal-desc{font-size:.8rem;color:var(--muted);line-height:1.6;flex:1;}
+.modal-controls{flex-shrink:0;background:rgba(255,255,255,.04);border-radius:9px;padding:.55rem .85rem;font-size:.72rem;color:var(--muted);font-weight:700;white-space:pre-line;min-width:155px;}
+
+::-webkit-scrollbar{width:5px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:rgba(167,139,250,.3);border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:var(--accent)}
+
+footer{border-top:1px solid var(--border);padding:1.8rem 1.5rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;max-width:1400px;margin:0 auto;}
+footer p{font-size:.76rem;color:var(--muted);font-weight:600;}
+.footer-links{display:flex;gap:1.2rem;}
+.footer-links a{font-size:.76rem;color:var(--muted);text-decoration:none;font-weight:700;transition:color .2s;}
+.footer-links a:hover{color:var(--accent);}
+
+@media(max-width:900px){nav{display:none}.search-wrap input{width:130px}.games-grid{grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}}
+@media(max-width:600px){.header-inner{padding:0 1rem}.hero,.section,.cats-wrap{padding-left:1rem;padding-right:1rem}.games-grid{grid-template-columns:repeat(2,1fr)}.modal-footer{flex-direction:column}.modal-controls{min-width:unset;width:100%}}
+</style>
+</head>
+<body>
+<canvas id="bg-canvas"></canvas>
+
+<div class="notice">
+  <div class="notice-inner">
+    <span>🎮 100% Free &amp; Unblocked</span><span>⚡ No Downloads</span><span>🔥 50+ Real Games</span><span>🏆 Play Instantly</span><span>👾 New Games Weekly</span>
+    <span>🎮 100% Free &amp; Unblocked</span><span>⚡ No Downloads</span><span>🔥 50+ Real Games</span><span>🏆 Play Instantly</span><span>👾 New Games Weekly</span>
+  </div>
+</div>
+
+<header>
+  <div class="header-inner">
+    <a href="#" class="logo"><img src="logo.png" alt="D Logo" class="header-logo-img">NEON<em>▲</em>ARCADE</a>
+    <nav>
+      <a href="#" class="active" data-nav="all">🏠 All</a>
+      <a href="#" data-nav="action">💥 Action</a>
+      <a href="#" data-nav="shooter">🔫 Shooter</a>
+      <a href="#" data-nav="racing">🏎️ Racing</a>
+      <a href="#" data-nav="multiplayer">👥 Multi</a>
+      <a href="#" data-nav="io">🌐 .IO</a>
+      <a href="#" data-nav="puzzle">🧩 Puzzle</a>
+      <a href="#" data-nav="horror">👻 Horror</a>
+      <a href="#" data-nav="fps">🎯 FPS</a>
+      <a href="#" data-nav="sports">⚽ Sports</a>
+    </nav>
+    <div class="search-wrap">
+      <span>🔍</span>
+      <input type="text" id="searchInput" placeholder="Search games…">
+      <button id="ddgBtn" title="Search the web (results shown on this page)" aria-label="Search the web">🦆</button>
+    </div>
+  </div>
+</header>
+
+<!-- WEB SEARCH RESULTS PANEL (in-site) -->
+<div id="webSearchPanel" class="web-search-panel">
+  <div class="wsp-inner">
+    <div class="wsp-header">
+      <span class="wsp-title">🦆 Web Results for "<span id="wspQuery"></span>"</span>
+      <button id="wspClose" class="tb-btn btn-close">✕ Close</button>
+    </div>
+    <div id="wspBody" class="wsp-body">
+      <div class="wsp-loading"><div class="spinner"></div><span>Searching…</span></div>
+    </div>
+  </div>
+</div>
+
+<main>
+  <section class="hero">
+    <div class="hero-badge"><div class="live-dot"></div> Updated Daily</div>
+    <h1>Play <span>Free Games</span><br>Right in Your Browser</h1>
+    <p>50+ real unblocked games. No downloads, no sign-ups — click and play instantly.</p>
+    <div class="hero-stats">
+      <div class="stat"><span class="stat-n">50+</span><span class="stat-l">Games</span></div>
+      <div class="stat"><span class="stat-n">100%</span><span class="stat-l">Free</span></div>
+      <div class="stat"><span class="stat-n">0</span><span class="stat-l">Downloads</span></div>
+      <div class="stat"><span class="stat-n">∞</span><span class="stat-l">Fun</span></div>
+    </div>
+  </section>
+
+  <div class="cats-wrap" id="catsWrap">
+    <button class="cat-btn active" data-cat="all">🎮 All Games</button>
+    <button class="cat-btn" data-cat="action">💥 Action</button>
+    <button class="cat-btn" data-cat="shooter">🔫 Shooter / FPS</button>
+    <button class="cat-btn" data-cat="racing">🏎️ Racing</button>
+    <button class="cat-btn" data-cat="multiplayer">👥 Multiplayer</button>
+    <button class="cat-btn" data-cat="io">🌐 .IO Games</button>
+    <button class="cat-btn" data-cat="puzzle">🧩 Puzzle</button>
+    <button class="cat-btn" data-cat="horror">👻 Horror</button>
+    <button class="cat-btn" data-cat="fps">🎯 FPS / Sniper</button>
+    <button class="cat-btn" data-cat="sports">⚽ Sports</button>
+    <button class="cat-btn" data-cat="simulator">🕹️ Simulator</button>
+    <button class="cat-btn" data-cat="adventure">🗺️ Adventure</button>
+    <button class="cat-btn" data-cat="stickman">🧍 Stickman</button>
+    <button class="cat-btn" data-cat="snake">🐍 Snake</button>
+    <button class="cat-btn" data-cat="battle-royale">💀 Battle Royale</button>
+    <button class="cat-btn" data-cat="gogoman">🟠 GoGoMan</button>
+  </div>
+
+  <section class="section">
+    <div class="sec-header">
+      <h2 class="sec-title" id="secTitle">All Games</h2>
+      <span class="count-badge" id="countBadge">0 games</span>
+    </div>
+    <div class="games-grid" id="gamesGrid"></div>
+    <div id="no-results">😔 No games found for "<span id="noTerm"></span>"</div>
+  </section>
+</main>
+
+<div class="modal-overlay" id="modalOverlay">
+  <div class="game-modal">
+    <div class="modal-topbar">
+      <span id="modalIcon" style="font-size:1.3rem"></span>
+      <span class="modal-title" id="modalTitle">Game</span>
+      <span class="modal-tag-badge" id="modalCat">action</span>
+      <div class="topbar-right">
+        <button class="tb-btn btn-fs" id="btnFullscreen">⛶ Fullscreen</button>
+        <button class="tb-btn btn-close" id="btnClose">✕ Close</button>
+      </div>
+    </div>
+    <div class="iframe-wrap" id="iframeWrap">
+      <div class="iframe-loading" id="iframeLoading">
+        <div class="spinner"></div>
+        <span>Loading game…</span>
+      </div>
+      <iframe id="gameFrame" allowfullscreen allow="fullscreen *; autoplay; camera; microphone; pointer-lock" sandbox="allow-scripts allow-same-origin allow-popups allow-forms allow-pointer-lock allow-top-navigation allow-downloads allow-modals"></iframe>
+    </div>
+    <div class="modal-footer">
+      <div class="modal-desc" id="modalDesc"></div>
+      <div class="modal-controls" id="modalControls"></div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <a href="#" class="logo" style="font-size:.9rem">NEON<em style="-webkit-text-fill-color:var(--accent3)">▲</em>ARCADE</a>
+  <p>© 2025 NeonArcade · All games hosted by original publishers · Free to play</p>
+  <div class="footer-links"><a href="#">About</a><a href="#">Privacy</a><a href="#">DMCA</a><a href="#">Contact</a></div>
+</footer>
+
+<script>
+/* ── KIWI.TK ANIMATED ORB BACKGROUND ── */
+(function(){
+  const canvas=document.getElementById('bg-canvas'),ctx=canvas.getContext('2d');
+  function resize(){canvas.width=window.innerWidth;canvas.height=window.innerHeight;}
+  resize();window.addEventListener('resize',resize);
+  const COLORS=[[167,139,250],[56,189,248],[251,146,60],[52,211,153],[249,115,22],[244,114,182],[99,102,241],[20,184,166]];
+  const orbs=[];
+  for(let i=0;i<16;i++){
+    const color=COLORS[i%COLORS.length];
+    orbs.push({x:Math.random()*window.innerWidth,y:Math.random()*window.innerHeight,r:100+Math.random()*280,vx:(Math.random()-.5)*.32,vy:(Math.random()-.5)*.32,color,alpha:.04+Math.random()*.085,phase:Math.random()*Math.PI*2,speed:.0025+Math.random()*.0035});
+  }
+  function draw(){
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    orbs.forEach(o=>{
+      o.phase+=o.speed;
+      const r=o.r*(1+Math.sin(o.phase)*.055),a=o.alpha*(0.85+Math.sin(o.phase*.7)*.15);
+      const g=ctx.createRadialGradient(o.x,o.y,0,o.x,o.y,r);
+      g.addColorStop(0,`rgba(${o.color},${a})`);
+      g.addColorStop(.4,`rgba(${o.color},${a*.5})`);
+      g.addColorStop(1,`rgba(${o.color},0)`);
+      ctx.beginPath();ctx.arc(o.x,o.y,r,0,Math.PI*2);ctx.fillStyle=g;ctx.fill();
+      o.x+=o.vx;o.y+=o.vy;
+      if(o.x<-o.r)o.x=canvas.width+o.r;if(o.x>canvas.width+o.r)o.x=-o.r;
+      if(o.y<-o.r)o.y=canvas.height+o.r;if(o.y>canvas.height+o.r)o.y=-o.r;
+    });
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+/* ── GAMES DATABASE ── */
+const GAMES = [
+  /* ── SHOOTER / FPS ── */
+  {name:"Krunker io",cat:"shooter",tag:"top",plays:"28M",emoji:"🔫",
+   img:"https://www.onlinegames.io/media/posts/393/responsive/Krunker-io-2-xs.jpg",
+   url:"https://krunker.io/",
+   desc:"The world's biggest browser-based FPS. Pixel art style, fast-paced gunfights, custom maps, ranked matches, and a massive global player base. One of the most played IO shooters ever made.",
+   ctrl:"WASD: Move\nMouse: Aim\nClick: Shoot\nR: Reload\nShift: Slide"},
+  {name:"Venge io",cat:"shooter",tag:"hot",plays:"9.2M",emoji:"🎯",
+   img:"https://www.onlinegames.io/media/posts/391/responsive/Venge-io-2-xs.jpg",
+   url:"https://venge.io/",
+   desc:"A competitive 3D FPS with character abilities and ranked multiplayer. Choose your hero, master their unique skill, and dominate the leaderboard in team deathmatches.",
+   ctrl:"WASD: Move\nMouse: Aim\nClick: Shoot\nQ/E: Ability\nSpace: Jump"},
+  {name:"CS Online",cat:"shooter",tag:"hot",plays:"5.7M",emoji:"🪖",
+   img:"https://www.onlinegames.io/media/posts/434/responsive/CS-Online-xs.jpg",
+   url:"https://www.onlinegames.io/games/2023/unity2/cs-online/index.html",
+   desc:"Counter-Strike inspired browser FPS. Join a server, pick a team, and eliminate enemies with a massive arsenal. Classic maps, realistic gunplay, no download needed.",
+   ctrl:"WASD: Move\nMouse: Aim\nClick: Shoot\nR: Reload\n1-5: Weapons"},
+  {name:"Masked Special Forces",cat:"shooter",plays:"1.9M",emoji:"🎖️",
+   img:"https://www.onlinegames.io/media/posts/310/responsive/Masked-Special-Forces-FPS-xs.jpg",
+   url:"https://www.onlinegames.io/games/2022/unity2/masked-special-forces/index.html",
+   desc:"Multiplayer FPS with deep weapon and armor customization. Choose your loadout and battle in intense team combat across multiple arenas.",
+   ctrl:"WASD: Move\nMouse: Aim\nClick: Shoot\nR: Reload\nSpace: Jump"},
+  {name:"Deadshot io",cat:"shooter",plays:"3.1M",emoji:"🎯",
+   img:"https://www.onlinegames.io/media/posts/898/responsive/Deadshot-io-xs.jpg",
+   url:"https://deadshot.io/",
+   desc:"Fast-paced multiplayer browser shooter with smooth 3D graphics. Snipe enemies, choose different weapon classes, and climb the global leaderboard in real-time matches.",
+   ctrl:"WASD: Move\nMouse: Aim\nClick: Shoot\nShift: ADS\nR: Reload"},
+  {name:"Crazy Shooters 2",cat:"shooter",plays:"2.4M",emoji:"💥",
+   img:"https://www.onlinegames.io/media/posts/90/responsive/Crazy-Shooters-2-Online-xs.jpg",
+   url:"https://www.onlinegames.io/games/2019/unity2/crazy-shooters-2/index.html",
+   desc:"Intense multiplayer first-person shooter with realistic weapons, multiple game modes including team deathmatch and free-for-all. Great for quick sessions.",
+   ctrl:"WASD: Move\nMouse: Aim\nLClick: Shoot\nRClick: Zoom\nR: Reload"},
+  {name:"Time Shooter",dev:"gogoman",cat:"shooter",tag:"hot",plays:"8.4M",emoji:"⏱️",
+   img:"https://www.onlinegames.io/media/posts/778/Time-Shooter.jpg",
+   url:"https://html5.gamedistribution.com/1092591e1589474cbb6c42cd388440c6/?gd_sdk_referrer_url=https://www.onlinegames.io/time-shooter",
+   desc:"Time only moves when YOU move. Stand still and everything freezes. Shoot glass-made red enemies to pieces in this mind-bending 3D FPS inspired by SuperHot. Plan every step — a single mistake ends your run.",
+   ctrl:"WASD: Move (time moves with you!)\nMouse: Aim\nLClick: Pick up / Shoot\nRClick: Throw weapon\nStand still to freeze time!"},
+  {name:"Time Shooter 2",dev:"gogoman",cat:"shooter",tag:"hot",plays:"11.2M",emoji:"⏱️",
+   img:"https://www.onlinegames.io/media/posts/827/Time-Shooter-2.jpg",
+   url:"https://html5.gamedistribution.com/62a72f2da7cb4b609579a47653546e6a/?gd_sdk_referrer_url=https://www.onlinegames.io/time-shooter-2/",
+   desc:"The sequel to the hit time-manipulation FPS. More maps, more weapons, more enemies. Dodge bullets in slow motion, grab rifles from enemies, trigger gas cylinder explosions. Time stops until you move — use it wisely.",
+   ctrl:"WASD: Move (time moves with you!)\nMouse: Aim\nLClick: Pick up / Shoot\nRClick: Throw weapon\nTip: Move slowly = more reaction time"},
+  {name:"Time Shooter 3: SWAT",dev:"gogoman",cat:"shooter",tag:"top",plays:"6.7M",emoji:"🪖",
+   img:"https://www.onlinegames.io/media/posts/864/time-shooter-swat.jpg",
+   url:"https://html5.gamedistribution.com/6493b872f0564380a7adad671d1e0a57/?gd_sdk_referrer_url=https://www.onlinegames.io/time-shooter-3-swat/",
+   desc:"The biggest Time Shooter yet. You're a SWAT operative storming terrorist hideouts — but there are hostages. Time still freezes when you stop, but now one stray bullet ends it all. Breach doors with a battering ram, switch between pistols/shotguns/machine guns, and rescue every hostage.",
+   ctrl:"WASD: Move (time moves with you!)\nMouse: Aim\nLClick: Shoot\nRClick: Throw / Battering ram\nF: Pick up weapon\n⚠️ Don't shoot hostages!"},
+  {name:"Funny Shooter",dev:"gogoman",cat:"shooter",tag:"hot",plays:"5.8M",emoji:"🟠",
+   img:"https://www.onlinegames.io/media/posts/557/Funny-Shooter.jpg",
+   url:"https://html5.gamedistribution.com/631448f9aa2847dbae10f0f03890424e/?gd_sdk_referrer_url=https://www.onlinegames.io/funny-shooter",
+   desc:"You're outnumbered by an army of goofy orange men with helmets. They throw bombs and forks, charge at you in giant form, and attack from rooftops. Survive the invasion using pistols, AK-47s, snipers, and a bazooka. Dodge as much as you shoot — this is GoGoMan's signature comedic FPS.",
+   ctrl:"WASD: Move\nShift: Run\nSpace: Jump\nMouse: Aim\nLClick: Shoot\nRClick: Aim down sights\nR: Reload\nG: Grenade\nF/Q: Knife attack\n1-7: Weapons"},
+  {name:"Funny Shooter 2",dev:"gogoman",cat:"shooter",tag:"top",plays:"9.4M",emoji:"🔴",
+   img:"https://www.onlinegames.io/media/posts/630/Funny-Shooter-2.jpg",
+   url:"https://html5.gamedistribution.com/a1b7ac4025214a5cb0bd01a4f675513a/?gd_sdk_referrer_url=https://www.onlinegames.io/funny-shooter-2",
+   desc:"The red men are back and angrier than ever. Fight through 10 escalating levels, unlock 15+ weapons from the shop, attach scopes and silencers, upgrade health and grenades — then face the Big Boss at the final level. More polish, more chaos, more fun than the original.",
+   ctrl:"WASD: Move\nShift: Run\nSpace: Jump\nMouse: Aim\nLClick: Shoot\nRClick: Aim\nR: Reload\nG: Grenade\n1-7: Weapons\nTab: Pause"},
+  {name:"Squid Shooter",dev:"gogoman",cat:"shooter",plays:"3.7M",emoji:"🦑",
+   img:"https://www.onlinegames.io/media/posts/968/squid-Shooter-online.jpg",
+   url:"https://html5.gamedistribution.com/c0a72373f81d4096a325f9b0dde0d7b9/?gd_sdk_referrer_url=https://www.onlinegames.io/squid-shooter/",
+   desc:"Inspired by Squid Game — but now you're armed. Fight waves of green-suited players, pink guards, and giant dolls in a playground arena using 18 weapons including bazookas and grenade launchers. Comedic chaos with cash-grenade explosions and coffin-crate enemies.",
+   ctrl:"WASD: Move\nShift: Sprint\nSpace: Jump\nMouse: Aim\nLClick: Shoot\nRClick: ADS\nG: Grenade\nR: Reload\n1-7: Weapons"},
+  {name:"FNaF Shooter",dev:"gogoman",cat:"horror",tag:"hot",plays:"4.2M",emoji:"🔦",
+   img:"https://www.onlinegames.io/media/posts/836/fnaf-shooter.jpg",
+   url:"https://html5.gamedistribution.com/eb8346d4739e40eda6e4196dfc9166b7/?gd_sdk_referrer_url=https://www.onlinegames.io/fnaf-shooter/",
+   desc:"No more hiding — now you fight back! FNaF Shooter drops you into Pacific Palm Mall armed to the teeth against Freddy, Bonnie, and a full army of animatronics. Clear each floor, check every shop and corner, aim for headshots — even legless animatronics will crawl after you.",
+   ctrl:"WASD: Move\nShift: Run\nMouse: Aim\nLClick: Shoot\nRClick: ADS\nR: Reload\nF: Knife\nG: Grenade\n1-7: Switch weapons\nCheck top-left map for red circles!"},
+  {name:"Sniper Shot: Bullet Time",dev:"gogoman",cat:"shooter",plays:"2.9M",emoji:"🎯",
+   img:"https://www.onlinegames.io/media/posts/778/Time-Shooter.jpg",
+   url:"https://html5.gamedistribution.com/5cc8db7f4e184e4d866fa9c03fa58b50/?gd_sdk_referrer_url=https://www.onlinegames.io/sniper-shot-bullet-time/",
+   desc:"A precision sniper game with cinematic bullet-time kills. Take your shot and watch an X-ray slow-motion camera show the bullet tearing through the enemy's body. Target any body part — headshots deal maximum damage. Jump to get the perfect angle before you pull the trigger.",
+   ctrl:"Mouse: Aim\nRight Click: Zoom scope\nLeft Click: Shoot\nSpace: Jump before shooting\nX-ray camera triggers on kills"},
+  {name:"Among Shooter",dev:"gogoman",cat:"shooter",plays:"2.1M",emoji:"🔵",
+   img:"https://www.onlinegames.io/media/posts/778/Time-Shooter.jpg",
+   url:"https://html5.gamedistribution.com/7f9b6a3e5c214d2ab1e8f0a4d3c9e7b2/?gd_sdk_referrer_url=https://www.onlinegames.io/among-shooter-kill-impostor/",
+   desc:"The Impostors from Among Us have gone rogue and taken over — now you hunt them. Armed with an FPS arsenal in a colorful 3D world, blast through waves of crewmate-colored enemies in this fun mashup of Among Us and a wave shooter.",
+   ctrl:"WASD: Move\nMouse: Aim\nLClick: Shoot\nR: Reload\nG: Grenade"},
+  {name:"Zombies Shooter Part 2",dev:"gogoman",cat:"shooter",plays:"1.8M",emoji:"🧟",
+   img:"https://www.onlinegames.io/media/posts/778/Time-Shooter.jpg",
+   url:"https://html5.gamedistribution.com/b7a4c2f1e9d34b8c9e0f7a3d5c8b4e1a/?gd_sdk_referrer_url=https://www.onlinegames.io/zombies-shooter-part-2/",
+   desc:"The undead apocalypse continues. More maps, more zombie types, more weapons. Survive waves of increasingly fast and armored zombies using the full GoGoMan FPS arsenal. Upgrade between rounds and hold your ground.",
+   ctrl:"WASD: Move\nMouse: Aim\nLClick: Shoot\nR: Reload\nG: Grenade\nShift: Run"},
+  {name:"Parkour: Climb and Jump",dev:"gogoman",cat:"action",plays:"1.4M",emoji:"🧗",
+   img:"https://www.onlinegames.io/media/posts/778/Time-Shooter.jpg",
+   url:"https://html5.gamedistribution.com/3e8b5a7c2f1d4e9b8c0f6a4d3c7b5e2a/?gd_sdk_referrer_url=https://www.onlinegames.io/parkour-climb-and-jump/",
+   desc:"A pure 3D parkour runner from GoGoMan. Sprint, jump, wall-run, and climb through urban obstacle courses with smooth first-person movement. Speed is everything — find the fastest route through each level.",
+   ctrl:"WASD: Move\nSpace: Jump\nShift: Sprint\nMouse: Look\nWall-run on vertical surfaces"},
+  {name:"Hero 5: Katana Slice",dev:"gogoman",cat:"action",plays:"1.6M",emoji:"⚔️",
+   img:"https://www.onlinegames.io/media/posts/778/Time-Shooter.jpg",
+   url:"https://html5.gamedistribution.com/4d9c6b8a3e2f5d1c7b0e9a8f4c3d7b6e/?gd_sdk_referrer_url=https://www.onlinegames.io/hero-5-katana-slice/",
+   desc:"Wield a blazing katana through waves of enemies in GoGoMan's Hero series. Slice, dash, and combo your way through levels with satisfying sword mechanics. Upgrade your blade and unlock new abilities between waves.",
+   ctrl:"WASD: Move\nMouse: Aim\nLClick: Slash\nRClick: Heavy attack\nSpace: Dodge roll"},
+  {name:"Hero 3: Flying Robot",dev:"gogoman",cat:"action",plays:"1.3M",emoji:"🤖",
+   img:"https://www.onlinegames.io/media/posts/778/Time-Shooter.jpg",
+   url:"https://html5.gamedistribution.com/2f7a9c5e8b1d4c6b3e0f8a7d5c2b9e4a/?gd_sdk_referrer_url=https://www.onlinegames.io/hero-3-flying-robot/",
+   desc:"Take to the skies as a flying robotic hero in this third-person action game. Hover, dodge missiles, blast enemies from the air, and unleash powerful tech abilities. A standout entry in GoGoMan's Hero series.",
+   ctrl:"WASD: Move\nSpace: Fly / Hover\nMouse: Aim\nLClick: Shoot\nRClick: Special ability"},
+  {name:"Funny Battle Simulator 2",dev:"gogoman",cat:"action",plays:"2.3M",emoji:"💣",
+   img:"https://www.onlinegames.io/media/posts/778/Time-Shooter.jpg",
+   url:"https://html5.gamedistribution.com/6c3b8a9e5f2d7c1b4e0a9f8d3c6b7e5a/?gd_sdk_referrer_url=https://www.onlinegames.io/funny-battle-simulator-2/",
+   desc:"Place your army of goofy units on the battlefield and watch them auto-battle the enemy team. Choose from dozens of unit types, manage your formation, and upgrade your forces between rounds in this chaotic battle simulator.",
+   ctrl:"Click to place units\nDrag to reposition\nPress Start to battle\nUpgrade between rounds!"},
+  {name:"Shell Shockers",cat:"shooter",tag:"top",plays:"14M",emoji:"🥚",
+   img:"https://www.onlinegames.io/media/posts/341/responsive/Shell-Shockers-io-Game-xs.jpg",
+   url:"https://shellshock.io/",
+   desc:"You are an egg armed with guns. Battle other egg players in this ridiculous and addictive multiplayer FPS. Simple concept, deep skill ceiling — one of the most unique IO shooters.",
+   ctrl:"WASD: Move\nMouse: Aim\nClick: Shoot\nE: Switch weapon\nQ: Grenade"},
+  {name:"WarBrokers.io",cat:"shooter",plays:"2.8M",emoji:"🚁",
+   img:"https://www.onlinegames.io/media/posts/346/responsive/War-Brokers.io-Online-xs.jpg",
+   url:"https://warbrokers.io/",
+   desc:"Large-scale multiplayer combat with infantry, vehicles, tanks, and helicopters. Battle royale and team modes available. One of the most feature-rich browser war games.",
+   ctrl:"WASD: Move\nMouse: Aim\nClick: Shoot\nF: Enter vehicle\nG: Grenade"},
+
+  /* ── ACTION ── */
+  {name:"Stickman GTA City",cat:"action",tag:"hot",plays:"4.1M",emoji:"🔫",
+   img:"https://www.onlinegames.io/media/posts/900/responsive/stickman-gta-city-free-xs.jpg",
+   url:"https://cloud.onlinegames.io/games/2024/unity3/stickman-gta-city/index-og.html",
+   desc:"Open-world GTA-style game with stickman characters. Drive cars, fight enemies, explore the city freely. The closest browser game to GTA.",
+   ctrl:"WASD: Move\nMouse: Look\nLClick: Shoot\nE: Enter car\nTab: Map"},
+  {name:"GTA Simulator",cat:"action",plays:"2.3M",emoji:"🌆",
+   img:"https://www.onlinegames.io/media/posts/416/responsive/GTA-Simulator-xs.jpg",
+   url:"https://www.onlinegames.io/games/2023/unity2/gta-simulator/index.html",
+   desc:"Roam a full open city, jack vehicles, fight cops, and cause mayhem. No download, no cost — pure sandbox chaos in your browser.",
+   ctrl:"WASD: Move\nF: Enter car\nMouse: Look\nClick: Action"},
+  {name:"Stickman Parkour",cat:"stickman",plays:"1.4M",emoji:"🧍",
+   img:"https://www.onlinegames.io/media/posts/871/responsive/stickman-parkour-OG-xs.jpg",
+   url:"https://cloud.onlinegames.io/games/2024/construct/219/stickman-parkour/index-og.html",
+   desc:"Run, jump and flip through 30 platformer levels as Stickman. Collect keys, open chests and find the exit door. Easy to learn, hard to master.",
+   ctrl:"Arrows/WASD: Move\nSpace: Jump\nDouble-tap: Double Jump"},
+  {name:"1v1.LOL",cat:"action",tag:"hot",plays:"18M",emoji:"🏗️",
+   img:"https://www.onlinegames.io/media/posts/379/responsive/1v1.LOL-Online-xs.jpg",
+   url:"https://1v1.lol/",
+   desc:"The ultimate build-and-shoot battle game. Build structures for cover, then blast your opponent. Practice mode, ranked matches, and custom lobbies. Fortnite-style in your browser.",
+   ctrl:"WASD: Move\nMouse: Aim\nClick: Shoot\nQ/E/R/F: Build\nZ/X/C/V: Switch build"},
+  {name:"Pixel Gun Apocalypse 7",cat:"action",plays:"1.2M",emoji:"🔫",
+   img:"https://www.onlinegames.io/media/posts/226/responsive/pixel-gun-apocalypse-7-xs.jpg",
+   url:"https://www.onlinegames.io/games/2020/unity2/pixel-gun-apocalypse-7/index.html",
+   desc:"Blocky multiplayer shooter in a post-apocalyptic world. Multiple weapon classes, team deathmatch modes, and pixelated arenas that are endlessly replayable.",
+   ctrl:"WASD: Move\nMouse: Aim\nClick: Shoot\n1-6: Weapons\nR: Reload"},
+  {name:"Sword Battle io",cat:"action",plays:"1.8M",emoji:"⚔️",
+   img:"https://www.onlinegames.io/media/posts/679/responsive/SwordBattle-io-xs.jpg",
+   url:"https://swordbattle.io/",
+   desc:"Grow your sword by defeating enemies and eating orbs in this addictive multiplayer arena. The longer you survive, the bigger your blade — and the harder you are to kill.",
+   ctrl:"WASD/Arrows: Move\nMouse: Aim sword\nClick: Attack\nGrow to dominate!"},
+
+  /* ── RACING ── */
+  {name:"Drift King",cat:"racing",tag:"hot",plays:"3.2M",emoji:"🏎️",
+   img:"https://www.onlinegames.io/media/posts/729/responsive/Drift-King-xs.jpg",
+   url:"https://www.onlinegames.io/games/2024/unity/drift-king/index.html",
+   desc:"Race through 3D tracks with sports cars. Drift through hairpins, customize your ride, and master 6 different maps. Realistic smoke trails and full tuning options.",
+   ctrl:"WASD/Arrows: Drive\nM: Rearview\nC: Camera\nR: Reset"},
+  {name:"Highway Traffic",cat:"racing",tag:"hot",plays:"2.8M",emoji:"🚗",
+   img:"https://www.onlinegames.io/media/posts/32/responsive/Highway-Traffic-2-xs.jpg",
+   url:"https://www.onlinegames.io/games/2022/unity/highway-traffic/index.html",
+   desc:"Weave through dense highway traffic at breakneck speed. Dodge cars, collect coins, unlock upgrades. Gets brutally hard fast.",
+   ctrl:"WASD/Arrows: Drive\nAvoid traffic\nCollect coins"},
+  {name:"Smash Karts",cat:"racing",tag:"top",plays:"11M",emoji:"🏁",
+   img:"https://www.onlinegames.io/media/posts/373/responsive/smash-karts-online-xs.jpg",
+   url:"https://smashkarts.io/",
+   desc:"Multiplayer kart battle arena. Race around and collect weapons to blast your opponents into oblivion. Pick up power-ups, dodge attacks, and be the last kart standing.",
+   ctrl:"WASD/Arrows: Drive\nAuto-shoot weapons\nCollect power-ups"},
+  {name:"Crazy Karts",cat:"racing",plays:"1.5M",emoji:"🎠",
+   img:"https://www.onlinegames.io/media/posts/740/responsive/Crazy-Karts-xs.jpg",
+   url:"https://www.onlinegames.io/games/2024/construct/178/crazy-karts/index.html",
+   desc:"Multiplayer kart racing with weapons, boosts, and chaotic power-ups. Race against real players, fire rockets at rivals, and drift your way to victory.",
+   ctrl:"Arrows: Drive\nSpace: Use item\nDrift around corners"},
+  {name:"Survival Karts",cat:"racing",plays:"890K",emoji:"☠️",
+   img:"https://www.onlinegames.io/media/posts/887/responsive/survival-karts-play-xs.jpg",
+   url:"https://www.onlinegames.io/games/2024/construct/155/survival-karts/index.html",
+   desc:"Last-kart-standing battle royale racing. The arena shrinks, traps appear, and karts explode. Outlast everyone to win. Brutal and addictive.",
+   ctrl:"WASD/Arrows: Drive\nSurvive the shrinking arena!"},
+
+  /* ── IO GAMES ── */
+  {name:"Paper io 2",cat:"io",tag:"top",plays:"42M",emoji:"📄",
+   img:"https://www.onlinegames.io/media/posts/395/responsive/Paper-io-2-Online-xs.jpg",
+   url:"https://paper-io.com/",
+   desc:"Expand your colored territory by drawing loops on the map. Cut off rivals, avoid their trails, and conquer as much land as possible without getting sliced yourself.",
+   ctrl:"Arrow Keys or WASD\nDraw loops to claim land\nDon't get cut off!"},
+  {name:"Hole io",cat:"io",tag:"hot",plays:"16M",emoji:"🕳️",
+   img:"https://www.onlinegames.io/media/posts/381/responsive/Hole-io-Online-xs.jpg",
+   url:"https://hole-io.com/",
+   desc:"Control a black hole that swallows everything in its path. Start with small objects, grow, then devour cars, buildings, and rival holes. The biggest hole wins.",
+   ctrl:"Mouse/Drag: Move hole\nSwallow everything!\nGrow to eat bigger objects"},
+  {name:"Agar.io",cat:"io",tag:"top",plays:"55M",emoji:"🟢",
+   img:"https://www.onlinegames.io/media/posts/409/responsive/Agar.io-2-xs.jpg",
+   url:"https://agar.io/",
+   desc:"The original IO game. Control a cell and eat smaller cells to grow, while avoiding being eaten by larger ones. Simple, brilliant, endlessly competitive.",
+   ctrl:"Mouse: Move cell\nSpace: Split\nW: Eject mass\nEat smaller cells!"},
+  {name:"Bloxd io",cat:"io",tag:"top",plays:"32M",emoji:"🧱",
+   img:"https://www.onlinegames.io/media/posts/722/responsive/Bloxd-io-Play-xs.jpg",
+   url:"https://www.miniplay.com/embed/bloxd-io",
+   desc:"Minecraft-style multiplayer with building, survival, and PvP modes. Dig, build, fight, and explore with real players across modes like BedWars, SkyWars, and parkour.",
+   ctrl:"WASD: Move\nLeft Click: Break\nRight Click: Place\nSpace: Jump\nE: Inventory"},
+  {name:"Deer Adventure",cat:"action",tag:"new",plays:"2.6M",emoji:"🦌",
+   img:"https://azgames.io/upload/imgs/deer-adventure.jpg",
+   url:"https://azgames.io/deer-adventure.embed",
+   desc:"A hilarious open-world sandbox where you play as a deer with a hyper-flexible neck and massive antlers. Roam a cartoon town peacefully, ride vehicles, transform into other creatures, or go full chaos — just watch out for the animal police. You only have 3 lives.",
+   ctrl:"WASD: Move\nSpace: Jump\nShift: Sprint/Dash\nLeft Click: Attack (antlers)\nRight Click / Q: Stretch neck (grab/swing)\nF / E: Enter vehicles or ride animals"},
+  {name:"Taming io",cat:"io",plays:"4.4M",emoji:"🦁",
+   img:"https://www.onlinegames.io/media/posts/392/responsive/Taming-io-xs.jpg",
+   url:"https://taming.io/",
+   desc:"Survive and tame wild animals in this unique IO game. Build a base, tame creatures to fight for you, gather resources, and become the dominant force on the server.",
+   ctrl:"WASD: Move\nClick: Attack/interact\nTame animals to fight for you!"},
+  {name:"Mope io",cat:"io",plays:"7.1M",emoji:"🐾",
+   img:"https://www.onlinegames.io/media/posts/853/responsive/mope.io-xs.jpg",
+   url:"https://mope.io/",
+   desc:"Start as a tiny mouse, eat food, grow, and evolve into bigger and more powerful animals. The food chain is real — eat or be eaten in this massive browser animal evolution game.",
+   ctrl:"Mouse: Move\nW: Boost\nEat to evolve up the food chain!"},
+  {name:"EvoWorld FlyOrDie",cat:"io",plays:"5.2M",emoji:"🦅",
+   img:"https://www.onlinegames.io/media/posts/602/responsive/EvoWorld-FlyOrDie-play-xs.jpg",
+   url:"https://flyordie.io/",
+   desc:"Start as a tiny fly and evolve by eating food and avoiding predators. Grow through dozens of creature stages — from fly to dragon. Survive the sky!",
+   ctrl:"Mouse: Fly/move\nSpace: Boost\nEat food, avoid predators\nEvolve to dominate!"},
+  {name:"LOLbeans io",cat:"io",plays:"3.8M",emoji:"🫘",
+   img:"https://www.onlinegames.io/media/posts/388/responsive/Lolbeans-io-Play-xs.jpg",
+   url:"https://lolbeans.io/",
+   desc:"Fall Guys-style multiplayer obstacle course madness in your browser. Race through chaotic levels with other bean players, dodge traps, and be first to the finish.",
+   ctrl:"WASD: Run\nSpace: Jump\nShift: Dive\nComplete the obstacle course!"},
+  {name:"State.io",cat:"io",plays:"6.8M",emoji:"🗺️",
+   img:"https://www.onlinegames.io/media/posts/406/responsive/State.io-xs.jpg",
+   url:"https://state.io/",
+   desc:"Conquer countries by sending armies to capture neutral and enemy states. Simple drag-to-attack strategy that gets deeply complex. Real-time world domination.",
+   ctrl:"Click state to select\nDrag to target\nConquer all states to win!"},
+  {name:"Hexanaut io",cat:"io",plays:"2.9M",emoji:"⬡",
+   img:"https://www.onlinegames.io/media/posts/394/responsive/Hexanaut-io-xs.jpg",
+   url:"https://hexanaut.io/",
+   desc:"Expand your hexagonal territory while cutting off rival players. One of the freshest territory-control IO games — the hexagonal grid creates unique tactical situations.",
+   ctrl:"Mouse: Direct your trail\nCapture hexagons\nCut off rivals to eliminate them!"},
+  {name:"Worms Zone",cat:"snake",plays:"9.4M",emoji:"🐛",
+   img:"https://www.onlinegames.io/media/posts/338/responsive/Worms-Zone-io-2-xs.jpg",
+   url:"https://wormszone.io/",
+   desc:"Massive multiplayer snake game with power-ups, boosters, and skins. Eat food, grow your worm, and trap opponents to devour their remains. Snake taken to the extreme.",
+   ctrl:"Mouse: Guide worm direction\nClick/hold: Speed boost\nTrap enemies to eat them!"},
+  {name:"Gulper io",cat:"snake",plays:"2.1M",emoji:"🐍",
+   img:"https://www.onlinegames.io/media/posts/660/responsive/Gulper-io-xs.jpg",
+   url:"https://gulper.io/",
+   desc:"Colorful snake IO game where you consume glowing orbs to grow, then use your length to trap and eliminate other snakes. Satisfying physics and fast respawns.",
+   ctrl:"Mouse: Move snake\nHold click: Speed boost (costs size)\nTrap opponents with your body"},
+  {name:"Don't Fall io",cat:"io",plays:"1.7M",emoji:"😱",
+   img:"https://www.onlinegames.io/media/posts/182/responsive/Dont-Fall-io-2-xs.jpg",
+   url:"https://www.onlinegames.io/games/2021/3/dont-fall-io/index.html",
+   desc:"Push other players off the crumbling platform while staying on yourself. Physics-based multiplayer chaos — the last player standing wins. Simple and outrageously fun.",
+   ctrl:"WASD/Arrows: Move\nPush rivals off the edge!\nDon't fall!"},
+
+  /* ── MULTIPLAYER ── */
+  {name:"Skribblio",cat:"multiplayer",tag:"top",plays:"21M",emoji:"✏️",
+   img:"https://www.onlinegames.io/media/posts/385/responsive/Skribblio-xs.jpg",
+   url:"https://skribbl.io/",
+   desc:"Draw and guess words with friends in this massively popular multiplayer drawing game. One player draws, everyone else guesses. Hilariously bad drawings welcome.",
+   ctrl:"Type to guess\nWhen your turn: draw!\nMore points for faster guesses"},
+  {name:"Get On Top",cat:"multiplayer",plays:"1.1M",emoji:"🤼",
+   img:"https://www.onlinegames.io/media/posts/697/responsive/Get-on-Top-xs.jpg",
+   url:"https://www.onlinegames.io/games/2024/code/6/get-on-top/index.html",
+   desc:"2-player physics wrestling on the same keyboard. You and a friend try to flip each other over. Chaotic physics make every match unpredictable and hilarious.",
+   ctrl:"P1: W+D to lean\nP2: Up+Right to lean\nFirst to tip the other wins!"},
+  {name:"Rocket Goal IO",cat:"multiplayer",plays:"1.3M",emoji:"⚽",
+   img:"https://www.onlinegames.io/media/posts/1155/responsive/rocket-goal-io-xs.jpg",
+   url:"https://rocketgoal.io/",
+   desc:"Rocket-powered soccer in a browser. Score goals by launching your rocket car into the ball. Multiplayer chaos — easier than Rocket League, just as fun.",
+   ctrl:"WASD: Drive\nSpace: Boost\nHit the ball into the goal!"},
+  {name:"Slither.io",cat:"multiplayer",tag:"top",plays:"58M",emoji:"🐍",
+   img:"https://www.onlinegames.io/media/posts/338/responsive/Worms-Zone-io-2-xs.jpg",
+   url:"https://slither.io/",
+   desc:"The original multiplayer snake phenomenon. Eat glowing orbs to grow your snake, then trap other players and feast on their remains. One of the most played browser games ever made.",
+   ctrl:"Mouse: Move snake\nLeft Click / Space: Speed boost (costs length)\nTrap opponents with your body!"},
+  {name:"Diep.io",cat:"multiplayer",tag:"hot",plays:"22M",emoji:"🔵",
+   img:"https://www.onlinegames.io/media/posts/353/responsive/Moomoo.io-SandBox-2-xs.jpg",
+   url:"https://diep.io/",
+   desc:"Control a tank, shoot geometric shapes to level up, then upgrade your stats and cannon. Evolve into one of dozens of tank classes and dominate servers in 8 different multiplayer modes including team battles.",
+   ctrl:"Mouse: Aim\nLeft Click: Shoot\nWASD: Move\nLevel up and choose upgrades\n8 multiplayer modes!"},
+  {name:"MooMoo.io",cat:"multiplayer",tag:"hot",plays:"18M",emoji:"🐄",
+   img:"https://www.onlinegames.io/media/posts/353/Moomoo.io-SandBox-2.jpg",
+   url:"https://moomoo.io/",
+   desc:"Gather resources, build a base, craft weapons, and eliminate rivals. One of the most strategic IO games — manage food, build walls, form alliances, and outlast everyone on the server.",
+   ctrl:"WASD: Move\nLeft Click: Attack/Place\nE: Auto-build\nQ: Primary weapon\n1-5: Items\nBuild walls to protect base!"},
+  {name:"Zombs.io",cat:"multiplayer",plays:"8.4M",emoji:"🏰",
+   img:"https://www.onlinegames.io/media/posts/353/Moomoo.io-SandBox-2.jpg",
+   url:"https://zombs.io/",
+   desc:"Build a base and defend it against endless zombie waves every night. Gather gold during the day, upgrade towers, place walls, and team up with other players to survive as long as possible.",
+   ctrl:"WASD: Move\nLeft Click: Attack/Place\nRight Click: Rotate building\nE: Interact\nTeam up for better defense!"},
+  {name:"Brutal.io",cat:"multiplayer",plays:"5.2M",emoji:"💀",
+   img:"https://www.onlinegames.io/media/posts/1/responsive/ForceZ.io-xs.jpg",
+   url:"https://brutal.io/",
+   desc:"Swing a deadly flail to destroy other players and absorb their energy to grow. The bigger your flail, the more dangerous — but also harder to control. Pure physics-based multiplayer chaos.",
+   ctrl:"Mouse: Move and aim flail\nLeft Click: Release flail (throw)\nGrow your flail by absorbing energy\nDon't get hit!"},
+  {name:"Starblast.io",cat:"multiplayer",plays:"4.8M",emoji:"🚀",
+   img:"https://www.onlinegames.io/media/posts/345/Starblast-io-Game.jpg",
+   url:"https://starblast.io/",
+   desc:"Multiplayer space shooter where you mine asteroids to upgrade your ship through a full tech tree of 30+ ship types. Team mode, survival, and free-for-all available. One of the deepest browser space games.",
+   ctrl:"Mouse: Aim and thrust\nLeft Click: Shoot\nRight Click: Boost\nMine asteroids → upgrade ships"},
+  {name:"Kirka.io",cat:"multiplayer",tag:"hot",plays:"6.1M",emoji:"🎮",
+   img:"https://www.onlinegames.io/media/posts/704/Kirka-io.jpg",
+   url:"https://kirka.io/",
+   desc:"A stylish 3D multiplayer FPS with Roblox-inspired visuals, fast movement mechanics, and competitive ranked play. Multiple game modes, weapon skins, and a large active community.",
+   ctrl:"WASD: Move\nMouse: Aim\nLeft Click: Shoot\nShift: Sprint\nSpace: Jump\nR: Reload"},
+  {name:"Voxiom.io",cat:"multiplayer",plays:"3.7M",emoji:"⛏️",
+   img:"https://www.onlinegames.io/media/posts/673/Voxiom-io.jpg",
+   url:"https://voxiom.io/",
+   desc:"Voxel-based battle royale that mixes Minecraft-style building with battle royale gunplay. Build cover mid-fight, mine for resources, and outlast all players on the island.",
+   ctrl:"WASD: Move\nMouse: Aim\nLeft Click: Shoot/Mine\nRight Click: Place block\nQ/E: Change block type"},
+  {name:"Yohoho.io",cat:"multiplayer",plays:"4.3M",emoji:"⚔️",
+   img:"https://www.onlinegames.io/media/posts/406/responsive/State.io-xs.jpg",
+   url:"https://yohoho.io/",
+   desc:"Pirate battle royale IO game. Shrink the island shrinks forces all pirates together — slash rivals to steal their gold and grow in size. Last pirate standing wins the treasure.",
+   ctrl:"WASD / Mouse: Move\nLeft Click: Attack\nGrow by eliminating rivals\nLast pirate standing wins!"},
+  {name:"Defly.io",cat:"multiplayer",plays:"3.1M",emoji:"🚁",
+   img:"https://www.onlinegames.io/media/posts/345/Starblast-io-Game.jpg",
+   url:"https://defly.io/",
+   desc:"Control a helicopter and build territory walls while shooting down enemy helicopters. Similar to Paper.io but aerial and weaponized — shoot enemies, capture territory, win the map.",
+   ctrl:"WASD: Fly\nMouse: Aim\nLeft Click: Shoot\nBuild walls to claim territory"},
+  {name:"Fortnite Z",cat:"multiplayer",plays:"2.9M",emoji:"🏗️",
+   img:"https://www.onlinegames.io/media/posts/599/Fortnite-Z.jpg",
+   url:"https://www.onlinegames.io/games/2023/unity2/fortnite-z/index.html",
+   desc:"Browser-based Fortnite-inspired survival. Build structures, find weapons, fight zombies and real players in a shrinking zone. Satisfying build-and-shoot loop without any download.",
+   ctrl:"WASD: Move\nMouse: Aim\nLeft Click: Shoot/Build\nQ/E: Switch build mode\nSurvive the shrinking zone!"},
+  {name:"Craftnite",cat:"multiplayer",plays:"2.4M",emoji:"🔨",
+   img:"https://www.onlinegames.io/media/posts/878/craftnite.jpg",
+   url:"https://www.onlinegames.io/games/2024/unity2/craftnite/index.html",
+   desc:"Fortnite-meets-Minecraft browser game. Harvest materials, craft structures for cover, arm yourself with found weapons, and eliminate every player in the lobby to claim victory.",
+   ctrl:"WASD: Move\nMouse: Aim\nLeft Click: Shoot\nRight Click: Build\nHarvest trees/rocks for materials"},
+  {name:"Fortzone Battle Royale",cat:"multiplayer",plays:"1.8M",emoji:"💣",
+   img:"https://www.onlinegames.io/media/posts/1168/fortzone-battle-royale.webp",
+   url:"https://cloud.onlinegames.io/games/2024/unity/fortzone-battle-royale/index-og.html",
+   desc:"Fast-paced top-down battle royale with looting, shrinking zones, and real multiplayer lobbies. Scavenge weapons from crates, stay inside the safe zone, eliminate everyone.",
+   ctrl:"WASD: Move\nMouse: Aim\nLeft Click: Shoot\nE: Loot\nStay inside the white circle!"},
+  {name:"StabFish.io 2",cat:"multiplayer",plays:"2.6M",emoji:"🐟",
+   img:"https://www.onlinegames.io/media/posts/869/stabfish.jpg",
+   url:"https://stabfish2.io/",
+   desc:"Swim around stabbing other fish with your deadly spike. Grow by collecting food and eliminating opponents. Satisfying fish-eat-fish multiplayer with smooth physics and addictive gameplay.",
+   ctrl:"Mouse: Swim direction\nBoost automatically\nStab rivals with your spike\nGrow by eating food!"},
+  {name:"Madalin Stunt Cars Pro",cat:"multiplayer",plays:"7.8M",emoji:"🏎️",
+   img:"https://www.onlinegames.io/media/posts/401/Madalin-Stunt-Cars-Pro-Game.jpg",
+   url:"https://www.onlinegames.io/games/2019/unity2/madalin-stunt-cars-pro/index.html",
+   desc:"Open-world multiplayer stunt car playground. Choose from 34 cars, drive on massive open maps with ramps and loops, and do insane stunts alongside real players. No objectives — pure freedom.",
+   ctrl:"WASD/Arrows: Drive\nShift: Handbrake\nR: Reset car\nC: Change camera\nN: Nitro boost"},
+  {name:"Basketball Stars",cat:"multiplayer",plays:"9.1M",emoji:"🏀",
+   img:"https://www.onlinegames.io/media/posts/380/Basketball-Stars-Game.jpg",
+   url:"https://www.onlinegames.io/games/2019/2/basketball-stars/index.html",
+   desc:"1v1 and 2v2 basketball against real players online. Dribble past defenders, pull off trick shots, and dunk on opponents. One of the smoothest and most-played sports games in the browser.",
+   ctrl:"WASD/Arrows: Move\nZ/L: Shoot/Jump shot\nX/K: Steal/Sprint\nTime your shots carefully!"},
+  {name:"Football Bros IO",cat:"multiplayer",plays:"2.3M",emoji:"⚽",
+   img:"https://www.onlinegames.io/media/posts/1173/football-bros-io.webp",
+   url:"https://cloud.onlinegames.io/games/2024/construct/184/football-bros/index-og.html",
+   desc:"Side-scrolling multiplayer football with ragdoll physics. Control your bro to kick, header, and tackle in hilarious football matches against real players. Chaotic and laugh-out-loud fun.",
+   ctrl:"Arrow Keys: Move\nUp: Jump\nKick ball toward opponent's goal\nScore more goals to win!"},
+  {name:"Football Legends 2026",cat:"multiplayer",plays:"3.4M",emoji:"🏆",
+   img:"https://www.onlinegames.io/media/posts/1307/football-legends-2026.webp",
+   url:"https://cloud.onlinegames.io/games/2025/construct/274/football-legends-2026/index-og.html",
+   desc:"1v1 or 2v2 football with legendary players in a fast arena. Super shots, special abilities, and power-ups make this more than regular soccer — it's an action-sports showdown.",
+   ctrl:"P1: WASD + G (shoot) + H (special)\nP2: Arrows + K (shoot) + L (special)\n1v1 or 2v2 modes"},
+  {name:"8 Ball Pool Billiard",cat:"multiplayer",plays:"5.6M",emoji:"🎱",
+   img:"https://www.onlinegames.io/media/posts/442/8-Ball-Pool-Billiard.jpg",
+   url:"https://www.onlinegames.io/games/2022/3/8-ball-pool-billiard/index.html",
+   desc:"Classic 8-ball pool against real online opponents. Aim your cue, control spin and power, pocket all your balls then sink the 8 to win. Clean physics, online matchmaking.",
+   ctrl:"Mouse: Aim cue\nClick + drag: Set power\nRelease: Shoot\nPocket all your balls then the 8!"},
+  {name:"Chess",cat:"multiplayer",plays:"12M",emoji:"♟️",
+   img:"https://www.onlinegames.io/media/posts/376/Online-Chess-Game.jpg",
+   url:"https://www.onlinegames.io/games/2021/js/chess/index.html",
+   desc:"Classic chess against real players or AI. Full legal-move enforcement, multiple difficulty levels, and online matchmaking. The oldest and deepest strategy game — now in your browser.",
+   ctrl:"Mouse: Click piece then click destination\nAll legal moves highlighted\nCheckmate to win!"},
+  {name:"Rummikub",cat:"multiplayer",plays:"3.8M",emoji:"🀱",
+   img:"https://www.onlinegames.io/media/posts/387/Rummikub-Online.jpg",
+   url:"https://www.onlinegames.io/games/2022/construct/11/rummikub/index.html",
+   desc:"The classic tile-based board game — now online with real players. Draw tiles, form sets and runs, play your tiles to the table, and be the first to empty your rack.",
+   ctrl:"Mouse: Drag tiles\nClick to draw from pile\nForm runs (consecutive) or sets (same number)\nFirst to empty rack wins!"},
+  {name:"Ludo Hero",cat:"multiplayer",plays:"4.2M",emoji:"🎲",
+   img:"https://www.onlinegames.io/media/posts/467/Ludo-Hero.jpg",
+   url:"https://www.onlinegames.io/games/2022/construct/22/ludo-hero/index.html",
+   desc:"Online multiplayer Ludo with real players. Roll dice, race your tokens around the board, send opponents back to start, and get all your pieces home before everyone else.",
+   ctrl:"Click dice to roll\nClick token to move it\nLand on opponents to send them home!\nGet all 4 tokens home to win"},
+  {name:"ArmedForces.io",cat:"multiplayer",plays:"2.1M",emoji:"🎖️",
+   img:"https://www.onlinegames.io/media/posts/234/Armed-Forces-io.jpg",
+   url:"https://www.onlinegames.io/games/2021/unity2/armed-forces-io/index.html",
+   desc:"Top-down military multiplayer shooter. Command your soldier through maps littered with cover, pick up weapons, and eliminate opposing forces in team or free-for-all combat.",
+   ctrl:"WASD: Move\nMouse: Aim\nLeft Click: Shoot\nR: Reload\nE: Pick up weapon"},
+  {name:"FPS Strike Online",cat:"multiplayer",plays:"1.9M",emoji:"🔫",
+   img:"https://www.onlinegames.io/media/posts/902/fps-strike-online.jpg",
+   url:"https://cloud.onlinegames.io/games/2024/unity2/fps-strike/index-og.html",
+   desc:"Realistic multiplayer FPS with tight gunplay, multiple maps, and team-based modes. Communicate with your squad, hold angles, and clutch rounds in this competitive browser shooter.",
+   ctrl:"WASD: Move\nMouse: Aim\nLeft Click: Shoot\nRight Click: ADS\nR: Reload\nShift: Walk quietly"},
+  {name:"Wasteland Shooters",cat:"multiplayer",plays:"1.4M",emoji:"🏜️",
+   img:"https://www.onlinegames.io/media/posts/218/Wasteland-Shooters.jpg",
+   url:"https://www.onlinegames.io/games/2020/unity2/wasteland-shooters/index.html",
+   desc:"Post-apocalyptic multiplayer TPS. Fight through ruined cities against real players in gritty third-person combat. Loot weapons from fallen enemies and stay alive in the wasteland.",
+   ctrl:"WASD: Move\nMouse: Aim\nLeft Click: Shoot\nShift: Run\nC: Crouch"},
+  {name:"Blocky Combat SWAT",cat:"multiplayer",plays:"2.7M",emoji:"🟫",
+   img:"https://www.onlinegames.io/media/posts/561/Blocky-Combat-Swat.jpg",
+   url:"https://www.onlinegames.io/games/2021/unity2/blocky-combat-swat/index.html",
+   desc:"Blocky pixel-style multiplayer FPS with SWAT theme. Team deathmatch, capture the flag, and free-for-all modes. Large weapon selection and satisfying blocky destruction.",
+   ctrl:"WASD: Move\nMouse: Aim\nLeft Click: Shoot\nR: Reload\n1-5: Switch weapons\nG: Grenade"},
+  {name:"Dragon Simulator Multiplayer",cat:"multiplayer",plays:"3.3M",emoji:"🐉",
+   img:"https://www.onlinegames.io/media/posts/74/Dragon-Simulator-Multiplayer-Online.jpg",
+   url:"https://www.onlinegames.io/games/2019/unity/dragon-simulator-multiplayer/index.html",
+   desc:"Fly as a dragon in a shared open world. Breathe fire on enemies, fight other dragons flown by real players, level up your dragon, and dominate the skies. Surprisingly deep for a browser game.",
+   ctrl:"WASD: Fly\nLeft Click: Fire breath\nRight Click: Bite attack\nShift: Speed boost\nSpace: Rise altitude"},
+  {name:"Crazy Shooters",cat:"multiplayer",plays:"3.1M",emoji:"🔥",
+   img:"https://www.onlinegames.io/media/posts/81/Crazy-Shooters-Online.jpg",
+   url:"https://www.onlinegames.io/games/2019/unity2/crazy-shooters/index.html",
+   desc:"The original Crazy Shooters — classic multiplayer FPS with fast-paced team and free-for-all modes, smooth controls, and a solid weapon roster. A reliable go-to browser shooter.",
+   ctrl:"WASD: Move\nMouse: Aim\nLeft Click: Shoot\nR: Reload\nG: Grenade\n1-5: Weapons"},
+  {name:"Vortex 9",cat:"multiplayer",tag:"new",plays:"1.6M",emoji:"🌀",
+   img:"https://www.onlinegames.io/media/posts/1142/vortex-9.webp",
+   url:"https://cloud.onlinegames.io/games/2024/unity/vortex-9/index-og.html",
+   desc:"A stylish anime-inspired multiplayer TPS with fast movement, grappling hooks, and unique character abilities. One of the freshest-looking multiplayer games in the browser space.",
+   ctrl:"WASD: Move\nMouse: Aim\nLeft Click: Shoot\nRight Click: Ability\nShift: Dash\nE: Grapple hook"},
+  {name:"Snaker.io",cat:"multiplayer",plays:"1.3M",emoji:"🐍",
+   img:"https://www.onlinegames.io/media/posts/1261/snaker-io.webp",
+   url:"https://cloud.onlinegames.io/games/2025/construct/258/snaker-io/index-og.html",
+   desc:"Neon multiplayer snake game. Collect glowing pellets to grow your snake, then outmaneuver rivals and force them into your body to eliminate them and steal their size.",
+   ctrl:"Mouse / Arrow Keys: Steer snake\nSpeed boost: Click / Space\nTrap rivals with your body!"},
+  {name:"Push IO",cat:"multiplayer",tag:"new",plays:"980K",emoji:"💪",
+   img:"https://www.onlinegames.io/media/posts/1281/push-io.webp",
+   url:"https://cloud.onlinegames.io/games/2025/construct/277/push-io/index-og.html",
+   desc:"Simple but wildly addictive multiplayer pusher game. Run into opponents to push them off the platform, grow stronger with each elimination, and be the last one standing on the shrinking arena.",
+   ctrl:"WASD / Arrow Keys: Move\nRun into enemies to push them\nDon't fall off the platform!"},
+  {name:"Fall Bean 2",cat:"multiplayer",tag:"new",plays:"1.4M",emoji:"🫘",
+   img:"https://www.onlinegames.io/media/posts/1332/fall-bean-2.webp",
+   url:"https://cloud.onlinegames.io/games/2025/unity/fall-bean-2/index-og.html",
+   desc:"Fall Guys-style obstacle course party game — sequel to the original. Race through chaotic multi-stage courses with bean characters, dodge rotating traps, and be first across the finish line.",
+   ctrl:"WASD: Run\nSpace: Jump\nCtrl: Dive\nComplete all stages before everyone else!"},
+  {name:"Snow Ball Racing Multiplayer",cat:"multiplayer",tag:"new",plays:"870K",emoji:"❄️",
+   img:"https://www.onlinegames.io/media/posts/1130/snow-ball-racing-multiplayer-2.webp",
+   url:"https://cloud.onlinegames.io/games/2024/construct/230/snow-ball-racing-multiplayer/index-og.html",
+   desc:"Roll a snowball down a wintry mountain track against real players. Your snowball grows as it collects snow — bigger means faster but harder to steer. Race to the bottom first.",
+   ctrl:"Left/Right Arrows or A/D: Steer\nCollect snow to grow faster\nFirst to the bottom wins!"},
+  {name:"Tag Run",cat:"multiplayer",plays:"1.1M",emoji:"🏃",
+   img:"https://www.onlinegames.io/media/posts/1097/tag-run-2.webp",
+   url:"https://cloud.onlinegames.io/games/2024/construct/189/tag-run/index-og.html",
+   desc:"Multiplayer tag in a 3D arena. One player is 'it' — they must tag others to pass it on. The player who spends the least total time as 'it' wins the round. Surprisingly intense.",
+   ctrl:"WASD: Run\nMouse: Look\nSpace: Jump\nAvoid being 'it' — or tag others fast!"},
+  {name:"Basketball io",cat:"sports",plays:"2.2M",emoji:"🏀",
+   img:"https://www.onlinegames.io/media/posts/302/responsive/Basketball-io-2-xs.jpg",
+   url:"https://www.onlinegames.io/games/2022/unity/basketball-io/index.html",
+   desc:"Multiplayer 3v3 basketball in the browser. Real-time competitive basketball with smooth controls, shot arcs, and dunks. Play against real players worldwide.",
+   ctrl:"WASD: Move\nClick/Space: Shoot\nE: Pass/Steal\nScore more than the other team!"},
+
+  /* ── FIRST PERSON SHOOTER (FPS) ── */
+  {name:"Fragen",cat:"fps",tag:"hot",plays:"3.2M",emoji:"🎯",
+   img:"https://www.onlinegames.io/media/posts/1040/fragen-game.webp",
+   url:"https://cloud.onlinegames.io/games/2025/unity/fragen/index-og.html",
+   desc:"Gritty tactical FPS set in war-torn city maps. Earn kills to unlock new weapons and gear, customize your loadout, and collect daily login rewards. Team Deathmatch and Free-For-All modes. One of the most full-featured browser FPS games available.",
+   ctrl:"WASD: Move\nMouse: Aim\nLClick: Shoot\nRClick: ADS\nR: Reload\nShift: Sprint\nC: Crouch\nG: Grenade"},
+  {name:"WarStrike",cat:"fps",tag:"hot",plays:"4.7M",emoji:"💂",
+   img:"https://www.onlinegames.io/media/posts/870/WarStrike-Online.jpg",
+   url:"https://cloud.onlinegames.io/games/2024/unity2/warstrike/index-og.html",
+   desc:"Modern military FPS with realistic gunplay, multiple game modes, and a huge weapon arsenal. Fight through intense PvP matches or take on AI in solo missions. Polished visuals that rival mobile shooters.",
+   ctrl:"WASD: Move\nMouse: Aim\nLClick: Shoot\nRClick: Scope\nR: Reload\nSpace: Jump\nC: Crouch"},
+  {name:"Crazy Strike Force",cat:"fps",plays:"2.8M",emoji:"💥",
+   img:"https://www.onlinegames.io/media/posts/366/Crazy-Strike-Force.jpg",
+   url:"https://www.onlinegames.io/games/2020/unity2/crazy-strike-force/index.html",
+   desc:"Customize your soldier from head to toe, arm yourself with unlockable weapons, and enter fast online FPS combat. Wide map selection, upgrade progression, and strong multiplayer population.",
+   ctrl:"WASD: Move\nMouse: Aim\nLClick: Shoot\nRClick: Zoom\nR: Reload\nG: Grenade"},
+  {name:"CobraZ.io Classic",cat:"fps",plays:"2.1M",emoji:"🐍",
+   img:"https://www.onlinegames.io/media/posts/546/Cobraz.io-Classic.jpg",
+   url:"https://cobraz.io/",
+   desc:"One of the most advanced browser FPS games. Fully customize your soldier's appearance and weapons, then enter online lobbies for competitive team and free-for-all matches. Deep upgrade system.",
+   ctrl:"WASD: Move\nMouse: Aim\nLClick: Shoot\nRClick: ADS\nR: Reload\n1-5: Switch weapons"},
+  {name:"Guerrillas.io",cat:"fps",plays:"1.8M",emoji:"🌿",
+   img:"https://www.onlinegames.io/media/posts/423/Guerillas-io.jpg",
+   url:"https://guerrillas.io/",
+   desc:"Squad-based FPS IO game. Capture control points, protect teammates, and coordinate attacks in real multiplayer lobbies. Military-themed with fast-paced infantry combat across various jungle and urban maps.",
+   ctrl:"WASD: Move\nMouse: Aim\nLClick: Shoot\nE: Interact\nCapture zones to win!"},
+  {name:"Rebel Forces",cat:"fps",plays:"1.4M",emoji:"✊",
+   img:"https://www.onlinegames.io/media/posts/75/Rebel-Forces-3.jpg",
+   url:"https://www.onlinegames.io/games/2019/unity2/rebel-forces/index.html",
+   desc:"Join the rebel faction in this stylish FPS. Fight government forces across gritty urban environments, unlock better weapons with each mission, and take the fight to the enemy.",
+   ctrl:"WASD: Move\nMouse: Aim\nLClick: Shoot\nRClick: Zoom\nR: Reload\nG: Grenade"},
+  {name:"FPS Simulator",cat:"fps",plays:"1.6M",emoji:"🏹",
+   img:"https://www.onlinegames.io/media/posts/680/Fps-simulator.jpg",
+   url:"https://cloud.onlinegames.io/games/2023/unity2/fps-simulator/index.html",
+   desc:"Train your FPS aim and reflexes in this dedicated simulator. Pop targets, practice flick shots, improve tracking, and hone movement — then take those skills into real competitive games.",
+   ctrl:"WASD: Move\nMouse: Aim\nLClick: Shoot\nR: Reload\nPractice every technique!"},
+  {name:"Army Combat",cat:"fps",plays:"1.3M",emoji:"🪖",
+   img:"https://www.onlinegames.io/media/posts/664/Army-Combat.jpg",
+   url:"https://cloud.onlinegames.io/games/2023/unity2/army-combat/index.html",
+   desc:"Intense military FPS with realistic infantry combat. Storm enemy positions, clear rooms, and complete mission objectives across detailed warzone environments. Satisfying gunfeel and weapon variety.",
+   ctrl:"WASD: Move\nMouse: Aim\nLClick: Shoot\nRClick: ADS\nR: Reload\nSpace: Jump"},
+  {name:"Rainbow Survival",cat:"fps",plays:"1.1M",emoji:"🌈",
+   img:"https://www.onlinegames.io/media/posts/882/rainbow-survival.jpg",
+   url:"https://cloud.onlinegames.io/games/2024/unity/rainbow-survival/index-og.html",
+   desc:"Colorful FPS wave survival where bright enemy squads attack from all directions. Pick your weapons, fortify your position, and survive as many waves as possible before being overwhelmed.",
+   ctrl:"WASD: Move\nMouse: Aim\nLClick: Shoot\nR: Reload\nSurvive all waves!"},
+  {name:"Masked Forces",cat:"fps",plays:"2.4M",emoji:"😷",
+   img:"https://www.onlinegames.io/media/posts/4/Masked-Forces-Game.jpg",
+   url:"https://www.onlinegames.io/games/2019/unity2/masked-forces/index.html",
+   desc:"Classic online FPS with masked soldier characters. Multiple maps, weapon classes, and game modes. One of the OG browser shooters with a long history of active players.",
+   ctrl:"WASD: Move\nMouse: Aim\nLClick: Shoot\nR: Reload\nG: Grenade\n1-5: Weapons"},
+  {name:"Masked Forces Crazy Mode",cat:"fps",plays:"1.9M",emoji:"🤪",
+   img:"https://www.onlinegames.io/media/posts/3/Masked-Forces-Crazy-Mode-Online.jpg",
+   url:"https://www.onlinegames.io/games/2019/unity2/masked-forces-crazy-mode/index.html",
+   desc:"The unhinged remix of Masked Forces — bigger weapons, wilder maps, faster movement. All the chaos of the original cranked to the maximum. Great for quick sessions.",
+   ctrl:"WASD: Move\nMouse: Aim\nLClick: Shoot\nR: Reload\nG: Grenade"},
+  {name:"Masked Forces Zombie Survival",cat:"fps",plays:"1.7M",emoji:"🧟",
+   img:"https://www.onlinegames.io/media/posts/225/Masked-Forces-Zombie-Survival-Online.jpg",
+   url:"https://www.onlinegames.io/games/2020/unity2/masked-forces-zombie-survival/index.html",
+   desc:"The Masked Forces engine applied to zombie wave survival. Hold your position, buy better weapons between waves, and survive as long as possible against escalating zombie hordes.",
+   ctrl:"WASD: Move\nMouse: Aim\nLClick: Shoot\nR: Reload\nBuy upgrades between waves!"},
+  {name:"Masked Shooters Assault",cat:"fps",plays:"1.5M",emoji:"⚔️",
+   img:"https://www.onlinegames.io/media/posts/220/Masked-Shooters-Assault-Online.jpg",
+   url:"https://www.onlinegames.io/games/2020/unity2/masked-shooters-assault/index.html",
+   desc:"Tactical assault FPS with team-based combat. Storm objectives, eliminate the opposing squad, and hold key map areas. Features a solid selection of assault rifles and shotguns.",
+   ctrl:"WASD: Move\nMouse: Aim\nLClick: Shoot\nRClick: Scope\nR: Reload"},
+  {name:"Masked io",cat:"fps",plays:"1.2M",emoji:"👺",
+   img:"https://www.onlinegames.io/media/posts/62/Masked-io-Game.jpg",
+   url:"https://masked.io/",
+   desc:"Fast-paced IO-style FPS where masked soldiers fight in real-time. Quick to enter, instantly competitive, with simple controls that make it accessible for any skill level.",
+   ctrl:"WASD: Move\nMouse: Aim\nLClick: Shoot\nR: Reload\nFight to stay on top!"},
+  {name:"Zombie Apocalypse Shooter",cat:"fps",plays:"2.2M",emoji:"💀",
+   img:"https://www.onlinegames.io/media/posts/807/Zombie-Apocalypse-Shooter.jpg",
+   url:"https://cloud.onlinegames.io/games/2024/unity2/zombie-apocalypse-shooter/index-og.html",
+   desc:"First-person zombie survival in a post-apocalyptic world. Loot ammo, find weapons, and fight through hordes of the undead in multiple open environments. Atmospheric and intense.",
+   ctrl:"WASD: Move\nMouse: Aim\nLClick: Shoot\nR: Reload\nE: Pick up items\nFlashlight on in dark areas"},
+  {name:"Realistic Zombie Survival Warfare",cat:"fps",tag:"top",plays:"3.1M",emoji:"☠️",
+   img:"https://www.onlinegames.io/media/posts/559/Realistic-Zombie-Survival-Warfare.jpg",
+   url:"https://www.onlinegames.io/games/2021/unity2/realistic-zombie-survival-warfare/index.html",
+   desc:"One of the most polished zombie FPS games in the browser. Buy weapons from the shop, fortify positions, and survive increasingly brutal zombie waves. Realistic gun handling, gory kills, and deep weapon unlocks.",
+   ctrl:"WASD: Move\nMouse: Aim\nLClick: Shoot\nR: Reload\nB: Buy weapons\nSurvive all waves!"},
+  {name:"Blockapolypse: Zombie Shooter",cat:"fps",tag:"new",plays:"1.4M",emoji:"🧱",
+   img:"https://www.onlinegames.io/media/posts/1302/blockapolypse-zombie-shooter.webp",
+   url:"https://cloud.onlinegames.io/games/2025/unity/blockapolypse-zombie-shooter/index-og.html",
+   desc:"Blocky voxel-style zombie FPS. Navigate abandoned block-built cities overrun by the undead, blast through walls, find weapons, and survive. Style of Minecraft meets Left 4 Dead.",
+   ctrl:"WASD: Move\nMouse: Aim\nLClick: Shoot\nR: Reload\nE: Pick up weapon"},
+  {name:"Halloween Survival",cat:"fps",plays:"980K",emoji:"🎃",
+   img:"https://www.onlinegames.io/media/posts/450/Halloween-Survival.jpg",
+   url:"https://www.onlinegames.io/games/2022/unity2/halloween-survival/index.html",
+   desc:"Spooky Halloween-themed FPS survival. Fight ghosts, skeletons, and monsters through haunted environments. Buy bigger guns, survive each night, and uncover the mystery of the cursed town.",
+   ctrl:"WASD: Move\nMouse: Aim\nLClick: Shoot\nR: Reload\nB: Shop\nSurvive the night!"},
+  {name:"Xtreme Paintball Wars",cat:"fps",plays:"870K",emoji:"🎨",
+   img:"https://www.onlinegames.io/media/posts/609/Xtreme-Paintball-Wars.jpg",
+   url:"https://www.onlinegames.io/games/2023/unity2/xtreme-paintball-wars/index.html",
+   desc:"Colorful paintball FPS with team-based combat. Splatter opponents in vibrant arenas, capture the flag, and coordinate team strategies. Lighter tone, serious skill ceiling.",
+   ctrl:"WASD: Move\nMouse: Aim\nLClick: Shoot paint\nR: Reload\nCapture the flag!"},
+  {name:"Kawaii Shooter",cat:"fps",plays:"760K",emoji:"🌸",
+   img:"https://www.onlinegames.io/media/posts/844/Kawaii-Shooter.jpg",
+   url:"https://cloud.onlinegames.io/games/2024/unity/kawaii-shooter/index-og.html",
+   desc:"Cute anime-themed FPS where adorable characters run fast and shoot hard. Don't let the art style fool you — tight mechanics, responsive aiming, and genuinely fun combat. A unique vibe in the FPS space.",
+   ctrl:"WASD: Move\nMouse: Aim\nLClick: Shoot\nRClick: ADS\nR: Reload"},
+  {name:"Legendary Sniper",cat:"fps",plays:"1.8M",emoji:"🎯",
+   img:"https://www.onlinegames.io/media/posts/596/Legendary-Sniper.jpg",
+   url:"https://cloud.onlinegames.io/games/2023/unity2/legendary-sniper/index-og.html",
+   desc:"First-person sniper game with cinematic long-range kills. Find your angle, account for wind and distance, hold your breath, and pull the trigger. Increasingly difficult targets across 30+ missions.",
+   ctrl:"Mouse: Aim\nRClick: Scope in\nLClick: Fire\nHold RClick: Hold breath (steadies aim)\nAccount for distance!"},
+  {name:"Galactic Sniper",cat:"fps",plays:"1.1M",emoji:"🌌",
+   img:"https://www.onlinegames.io/media/posts/719/Galactic-Sniper.jpg",
+   url:"https://cloud.onlinegames.io/games/2023/unity/galactic-sniper/index-og.html",
+   desc:"Sci-fi sniper FPS set in outer space stations and alien environments. Line up shots on extraterrestrial targets through your scope and complete precision missions across 20 galactic levels.",
+   ctrl:"Mouse: Aim\nRClick: Scope\nLClick: Shoot\nHold breath for steady aim"},
+  {name:"Urban Sniper",cat:"fps",plays:"1.4M",emoji:"🏙️",
+   img:"https://www.onlinegames.io/media/posts/322/Urban-Sniper-Game.jpg",
+   url:"https://www.onlinegames.io/games/2021/unity2/urban-sniper/index.html",
+   desc:"City rooftop sniper missions. Find targets marked by your handler, line up the shot, eliminate without witnesses, and escape. Read mission briefings carefully — wrong kills fail the mission.",
+   ctrl:"Mouse: Look/aim\nRClick: Zoom scope\nLClick: Shoot\nE: Interact\nRead target descriptions!"},
+  {name:"Zombie Sniper",cat:"fps",plays:"1.2M",emoji:"🧟",
+   img:"https://www.onlinegames.io/media/posts/745/Zombie-Sniper.jpg",
+   url:"https://cloud.onlinegames.io/games/2024/unity/zombie-sniper/index-og.html",
+   desc:"Hold your sniper position and protect your squad from waves of approaching zombies. Headshots deal max damage and conserve ammo. Upgrade your rifle between waves and never let them breach your line.",
+   ctrl:"Mouse: Aim\nRClick: Scope in\nLClick: Shoot\nHeadshots = instant kill!"},
+  {name:"Sniper Elite",cat:"fps",plays:"1.6M",emoji:"🔭",
+   img:"https://www.onlinegames.io/media/posts/127/Sniper-Elite-Online.jpg",
+   url:"https://www.onlinegames.io/games/2019/3/sniper-elite/index.html",
+   desc:"Browser sniper game inspired by the Sniper Elite console series. X-ray kill cams when you land shots on vital organs. Stealthy missions through enemy territory with realistic ballistics.",
+   ctrl:"Mouse: Aim\nRClick: Zoom\nLClick: Shoot\nHold breath: Space\nX-ray cam triggers on great shots!"},
+  {name:"Secret Sniper Agent",cat:"fps",plays:"890K",emoji:"🕵️",
+   img:"https://www.onlinegames.io/media/posts/753/Secret-Sniper-Agent.jpg",
+   url:"https://cloud.onlinegames.io/games/2023/unity/secret-sniper-agent/index-og.html",
+   desc:"Covert operative sniper missions. Infiltrate enemy compounds from long range, neutralize high-value targets without triggering alarms, and escape without leaving a trace.",
+   ctrl:"Mouse: Aim\nRClick: Scope\nLClick: Shoot\nE: Interact\nStay undetected!"},
+  {name:"Sniper Reloaded",cat:"fps",plays:"1.0M",emoji:"🔃",
+   img:"https://www.onlinegames.io/media/posts/824/Sniper-Reloaded.jpg",
+   url:"https://cloud.onlinegames.io/games/2024/unity2/sniper-reloaded/index-og.html",
+   desc:"Classic sniper game rebuilt with modern visuals. More missions, better scope mechanics, wind effects, and a new upgrade system for rifle attachments. One of the most complete browser snipers.",
+   ctrl:"Mouse: Aim\nRClick: ADS/Scope\nLClick: Shoot\nR: Reload\nUpgrade rifle between missions"},
+  {name:"Block Sniper",cat:"fps",tag:"new",plays:"780K",emoji:"🧱",
+   img:"https://www.onlinegames.io/media/posts/1263/block-sniper.webp",
+   url:"https://cloud.onlinegames.io/games/2025/unity/block-sniper/index-og.html",
+   desc:"Voxel/blocky art-style sniper game. Pick off blocky enemies from long range, destroy voxel environments with your shots, and complete level objectives with limited ammo.",
+   ctrl:"Mouse: Aim\nRClick: Scope\nLClick: Shoot\nShoot through destructible blocks!"},
+  {name:"Mafia Sniper Crime Shooting",cat:"fps",plays:"920K",emoji:"🔫",
+   img:"https://www.onlinegames.io/media/posts/1278/mafia-sniper-crime-shooting.webp",
+   url:"https://cloud.onlinegames.io/games/2025/unity/mafia-sniper-crime-shooting/index-og.html",
+   desc:"Mob-boss eliminations from rooftop positions. Identify your mafia targets from dossier photos, thread shots through crowds, and disappear before law enforcement arrives.",
+   ctrl:"Mouse: Aim\nRClick: Scope in\nLClick: Shoot\nStudy target photos first!"},
+  {name:"Deer Hunter",cat:"fps",plays:"2.3M",emoji:"🦌",
+   img:"https://www.onlinegames.io/media/posts/591/Deer-Hunter.jpg",
+   url:"https://cloud.onlinegames.io/games/2023/unity/deer-hunter/index-og.html",
+   desc:"Wilderness hunting simulation. Stalk deer, elk, bear, and wolves through dense forests. Time your shots carefully — spook the animal and it flees. Complete mission quotas to unlock bigger rifle calibers.",
+   ctrl:"Mouse: Look\nRClick: Aim down sights\nLClick: Shoot\nMove slowly to avoid spooking prey!"},
+  {name:"Agent Walker vs Skibidi Toilets",cat:"fps",plays:"1.8M",emoji:"🚽",
+   img:"https://www.onlinegames.io/media/posts/794/Agent-Walker-vs-Skibidi-Toilets.jpg",
+   url:"https://cloud.onlinegames.io/games/2024/unity2/agent-walker-vs-skibidi-toilets/index-og.html",
+   desc:"Eliminate waves of Skibidi Toilet enemies as elite agent Walker in this hilariously absurd FPS. Blast the singing toilet heads with an arsenal of weapons across increasingly chaotic levels.",
+   ctrl:"WASD: Move\nMouse: Aim\nLClick: Shoot\nR: Reload\nEliminate all Skibidi Toilets!"},
+  {name:"Toilets Attack",cat:"fps",plays:"1.5M",emoji:"🪠",
+   img:"https://www.onlinegames.io/media/posts/785/Toilets-Attack.jpg",
+   url:"https://cloud.onlinegames.io/games/2024/unity/toilets-attack/index-og.html",
+   desc:"The Skibidi Toilets are attacking your city — defend it! FPS wave defense against the viral meme enemies. Increasingly unhinged waves of toilet creatures flood in from all directions.",
+   ctrl:"WASD: Move\nMouse: Aim\nLClick: Shoot\nR: Reload\nSurvive each wave!"},
+  {name:"Pixel Battle Royale",cat:"fps",plays:"2.0M",emoji:"🟦",
+   img:"https://www.onlinegames.io/media/posts/2/Pixel-Battle-Royale-Game.jpg",
+   url:"https://www.onlinegames.io/games/2019/unity2/pixel-battle-royale/index.html",
+   desc:"Pixel-art battle royale FPS. Drop in, loot weapons and ammo, and fight to be the last pixel soldier standing as the zone closes in. Fast-paced, retro-styled, highly replayable.",
+   ctrl:"WASD: Move\nMouse: Aim\nLClick: Shoot\nR: Reload\nStay in the safe zone!"},
+  {name:"Pixel Survival",cat:"fps",plays:"1.2M",emoji:"🟩",
+   img:"https://www.onlinegames.io/media/posts/5/Pixel-Survival-Game.jpg",
+   url:"https://www.onlinegames.io/games/2019/unity/pixel-survival/index.html",
+   desc:"Retro pixelated FPS survival. Gather resources by day, fight off monster hordes at night. Craft weapons and structures to make it through increasingly dangerous nights.",
+   ctrl:"WASD: Move\nMouse: Aim\nLClick: Shoot/Attack\nE: Interact\nBuild base before dark!"},
+  {name:"Stickman War",cat:"fps",plays:"1.1M",emoji:"🧍",
+   img:"https://www.onlinegames.io/media/posts/543/Stickman-War.jpg",
+   url:"https://cloud.onlinegames.io/games/2023/unity2/stickman-war/index-og.html",
+   desc:"FPS warfare with stickman soldiers. Surprisingly fun and fast — the stickman art style doesn't slow down the shooting mechanics. Clear maps, take objectives, and rack up kills.",
+   ctrl:"WASD: Move\nMouse: Aim\nLClick: Shoot\nR: Reload\n1-4: Switch weapons"},
+  {name:"Funny Shooter Bro",cat:"fps",plays:"1.4M",emoji:"😂",
+   img:"https://www.onlinegames.io/media/posts/735/Funny-Shooter-Bro.jpg",
+   url:"https://cloud.onlinegames.io/games/2024/unity/funny-shooter-bro/index-og.html",
+   desc:"Comedic FPS from the Funny Shooter lineage. Goofy enemy designs, absurd weapons, and chaotic level layouts make this a laugh-out-loud shooter while still demanding real aim and reflexes.",
+   ctrl:"WASD: Move\nShift: Sprint\nMouse: Aim\nLClick: Shoot\nG: Grenade\nR: Reload"},
+  {name:"ShooterZ.io",cat:"fps",plays:"1.7M",emoji:"🕹️",
+   img:"https://www.onlinegames.io/media/posts/72/ShooterZ.io-game.jpg",
+   url:"https://shooterz.io/",
+   desc:"Multiplayer IO FPS with fast match-making and no lag. Jump into live lobbies instantly, choose your weapon class, and compete on simple but well-designed arena maps.",
+   ctrl:"WASD: Move\nMouse: Aim\nLClick: Shoot\nR: Reload\nShift: Sprint"},
+  {name:"ForceZ.io",cat:"fps",plays:"1.5M",emoji:"⚡",
+   img:"https://www.onlinegames.io/media/posts/1/ForceZ.io.jpg",
+   url:"https://forcez.io/",
+   desc:"Intense multiplayer IO FPS with lightning-fast movement and satisfying weapon handling. Real-time player lobbies, multiple maps, and a simple but competitive ranking system.",
+   ctrl:"WASD: Move\nMouse: Aim\nLClick: Shoot\nR: Reload\nE: Pick up weapon"},
+  {name:"Commando Force 2",cat:"fps",tag:"new",plays:"1.1M",emoji:"🪖",
+   img:"https://www.onlinegames.io/media/posts/1326/commando-force-2.webp",
+   url:"https://cloud.onlinegames.io/games/2025/unity/commando-force-2/index-og.html",
+   desc:"Elite commando FPS with military mission structure. Storm enemy bases, rescue hostages, eliminate high-value targets, and complete objectives across 20 progressively harder missions.",
+   ctrl:"WASD: Move\nMouse: Aim\nLClick: Shoot\nRClick: ADS\nR: Reload\nComplete objectives!"},
+  {name:"PUBG Hack",cat:"fps",tag:"new",plays:"2.6M",emoji:"🔫",
+   img:"https://www.onlinegames.io/media/posts/1320/pubg-hack.webp",
+   url:"https://cloud.onlinegames.io/games/2025/unity/pubg-hack/index-og.html",
+   desc:"Browser-based PUBG-inspired battle royale FPS. Drop onto the island, loot buildings for weapons and armor, and be the last player standing as the blue zone shrinks. Real multiplayer lobbies.",
+   ctrl:"WASD: Move\nMouse: Aim\nLClick: Shoot\nRClick: ADS\nE: Loot\nStay in the zone!"},
+  {name:"Madness: Sheriff's Compound",cat:"fps",tag:"new",plays:"1.8M",emoji:"🤠",
+   img:"https://www.onlinegames.io/media/posts/1301/madness-sheriffs-compound.webp",
+   url:"https://cloud.onlinegames.io/games/2025/unity/madness-sheriffs-compound/index-og.html",
+   desc:"Wild West FPS chaos. Storm a heavily-fortified sheriff compound, gun down waves of deputies and outlaws, and fight your way through rooms of escalating madness. Fast and furiously fun.",
+   ctrl:"WASD: Move\nMouse: Aim\nLClick: Shoot\nR: Reload\nPick up enemy weapons!"},
+
+  /* ── EXTRA ACTION GAMES ── */
+  {name:"Getaway Shootout",cat:"action",tag:"hot",plays:"6.2M",emoji:"🚀",
+   img:"https://www.onlinegames.io/media/posts/697/responsive/Get-on-Top-xs.jpg",
+   url:"https://getawayshootout.com/",
+   desc:"Chaotic 2-player race-and-shoot game. Hop, bounce, and blast your way to the helicopter before your opponent. Collect power-ups, use jetpacks, and sabotage rivals in ridiculous ragdoll madness.",
+   ctrl:"P1: W/E to jump-lean, R to shoot\nP2: I/O to jump-lean, P to shoot\nFirst to the extraction wins!"},
+  {name:"Rooftop Snipers",cat:"action",plays:"4.4M",emoji:"🏗️",
+   img:"https://www.onlinegames.io/media/posts/697/responsive/Get-on-Top-xs.jpg",
+   url:"https://rooftopsnipers.com/",
+   desc:"2-player rooftop dueling game. Take pot-shots at your opponent until they tumble off the building. One-button shooting, physics-based knockback, and hilarious ragdoll deaths make this endlessly replayable.",
+   ctrl:"P1: W to aim/shoot, E to jump\nP2: I to aim/shoot, O to jump\nKnock opponent off the rooftop!"},
+  {name:"Drunken Wrestlers 2",cat:"action",plays:"3.1M",emoji:"🥊",
+   img:"https://www.onlinegames.io/media/posts/697/responsive/Get-on-Top-xs.jpg",
+   url:"https://drunkenwrestlers2.com/",
+   desc:"Floppy physics wrestling game for 1 or 2 players. Your wobbly characters stumble and flop with hilarious ragdoll physics. Punch, slap, and wrestle your way to victory in this comedy brawler.",
+   ctrl:"P1: WASD + shift\nP2: Arrow keys + enter\nSlam opponent to the ground!"},
+  {name:"Bullet Force",cat:"action",tag:"hot",plays:"8.9M",emoji:"💥",
+   img:"https://www.onlinegames.io/media/posts/434/responsive/CS-Online-xs.jpg",
+   url:"https://www.bulletforcegame.com/",
+   desc:"One of the best browser military shooters. Spectacularly smooth 3D graphics, full weapon customization with attachments, killstreak rewards, and massive online multiplayer population. Rivals mobile FPS games.",
+   ctrl:"WASD: Move\nMouse: Aim\nLClick: Shoot\nRClick: ADS\nR: Reload\nG: Grenade\nShift: Sprint"},
+  {name:"Moto X3M",cat:"action",plays:"12M",emoji:"🏍️",
+   img:"https://www.onlinegames.io/media/posts/32/responsive/Highway-Traffic-2-xs.jpg",
+   url:"https://www.onlinegames.io/games/2019/3/moto-x3m/index.html",
+   desc:"The legendary browser bike game. Race through 25 obstacle-packed levels on your dirt bike. Hit stunts mid-air for time bonuses, avoid deadly traps, and reach the finish line as fast as possible.",
+   ctrl:"Up/W: Accelerate\nDown/S: Brake\nLeft/A: Lean back\nRight/D: Lean forward\nFlip tricks mid-air for bonuses!"},
+  {name:"Fireboy and Watergirl 1",cat:"action",plays:"9.4M",emoji:"🔥",
+   img:"https://www.onlinegames.io/media/posts/697/responsive/Get-on-Top-xs.jpg",
+   url:"https://www.onlinegames.io/games/2019/3/fireboy-and-watergirl-1/index.html",
+   desc:"Classic 2-player co-op platformer. Fireboy navigates fire pools, Watergirl avoids water pools — only together can you collect all gems and reach the exit door. Masterclass co-op puzzle design.",
+   ctrl:"Fireboy: Arrow Keys\nWatergirl: WAD\nWork together — can't cross opposite element!"},
+  {name:"Bullet Bros",cat:"action",plays:"1.7M",emoji:"🔫",
+   img:"https://www.onlinegames.io/media/posts/90/responsive/Crazy-Shooters-2-Online-xs.jpg",
+   url:"https://cloud.onlinegames.io/games/2024/unity/bullet-bros/index-og.html",
+   desc:"Side-scrolling run-and-gun action with co-op support. Blast through waves of enemies, unlock weapon crates, and dodge bullets in this arcade shooter inspired by classic Metal Slug.",
+   ctrl:"WASD/Arrows: Move\nLeft Click: Shoot\nSpace: Jump\nShift: Roll/Dodge"},
+  {name:"Stickman Hook",cat:"action",plays:"7.8M",emoji:"🕸️",
+   img:"https://www.onlinegames.io/media/posts/871/responsive/stickman-parkour-OG-xs.jpg",
+   url:"https://www.onlinegames.io/games/2022/construct/7/stickman-hook/index.html",
+   desc:"Swing through 100+ levels using a grappling hook as a stickman character. Release at the right moment, build momentum, and nail the physics. One of the most satisfying movement games in a browser.",
+   ctrl:"Hold Click/Space: Attach hook and swing\nRelease: Let go and fly\nTime your release for maximum speed!"},
+
+  /* ── EXTRA RACING GAMES ── */
+  {name:"Drift Hunters",cat:"racing",tag:"top",plays:"14M",emoji:"💨",
+   img:"https://www.onlinegames.io/media/posts/397/Drift-Hunters-Pro.jpg",
+   url:"https://www.onlinegames.io/games/2020/3/drift-hunters/index.html",
+   desc:"The most played browser drift game ever. 26 tunable cars, 17 tracks, full engine and suspension upgrades, and deeply satisfying tire-screaming drift physics. Hours of tuning and driving.",
+   ctrl:"WASD/Arrows: Drive\nShift: Handbrake\nC: Camera\nUpgrade car in garage menu"},
+  {name:"Drift Hunters Pro",cat:"racing",plays:"5.8M",emoji:"🏁",
+   img:"https://www.onlinegames.io/media/posts/397/Drift-Hunters-Pro.jpg",
+   url:"https://www.onlinegames.io/games/2022/unity2/drift-hunters-pro/index.html",
+   desc:"The sequel to Drift Hunters with even more cars, upgraded graphics, new tuning options, and expanded track selection. Same satisfying drift physics with higher production quality.",
+   ctrl:"WASD/Arrows: Drive\nShift: Handbrake\nC: Camera\nN: Nitro"},
+  {name:"Madalin Cars Multiplayer",cat:"racing",plays:"9.2M",emoji:"🚗",
+   img:"https://www.onlinegames.io/media/posts/401/Madalin-Stunt-Cars-Pro-Game.jpg",
+   url:"https://www.onlinegames.io/games/2020/3/madalin-cars-multiplayer/index.html",
+   desc:"Open-world multiplayer car playground with 40 cars and massive free-roam maps. Do stunts, drift, or just cruise alongside other real players. No objectives — pure car freedom.",
+   ctrl:"WASD/Arrows: Drive\nShift: Handbrake\nC: Camera\nN: Nitro\nR: Reset car"},
+  {name:"Traffic Rider",cat:"racing",plays:"4.1M",emoji:"🏍️",
+   img:"https://www.onlinegames.io/media/posts/32/responsive/Highway-Traffic-2-xs.jpg",
+   url:"https://cloud.onlinegames.io/games/2023/unity/traffic-rider/index-og.html",
+   desc:"First-person motorcycle racing through traffic. Near-miss other vehicles to fill the adrenaline meter, unlock faster bikes, and complete timed missions. One of the best mobile-style racers in a browser.",
+   ctrl:"Up/W: Accelerate\nDown/S: Brake\nLeft/Right: Lane change\nNear-miss traffic for bonus score!"},
+  {name:"Formula Rush",cat:"racing",plays:"2.4M",emoji:"🏎️",
+   img:"https://www.onlinegames.io/media/posts/729/responsive/Drift-King-xs.jpg",
+   url:"https://cloud.onlinegames.io/games/2024/unity/formula-rush/index-og.html",
+   desc:"F1-style racing at insane speeds. Take corners at the absolute limit, manage tire wear, and use nitro boosts at the right moments. 12 circuits with authentic racing lines.",
+   ctrl:"WASD/Arrows: Drive\nShift: Brake\nN: Nitro\nStay on the racing line!"},
+  {name:"Road Fury",cat:"racing",plays:"3.6M",emoji:"💣",
+   img:"https://www.onlinegames.io/media/posts/32/responsive/Highway-Traffic-2-xs.jpg",
+   url:"https://www.onlinegames.io/games/2019/3/road-fury/index.html",
+   desc:"Explosive combat racing. Drive and shoot simultaneously — blast rival cars off the highway, collect coins, buy better weapons, and survive waves of enemy vehicles in this Mad Max-style racer.",
+   ctrl:"WASD/Arrows: Drive\nLeft Click: Shoot\nCollect drops from destroyed cars!"},
+
+  /* ── EXTRA IO/MULTIPLAYER GAMES ── */
+  {name:"Little Big Snake",cat:"snake",plays:"7.3M",emoji:"🐍",
+   img:"https://www.onlinegames.io/media/posts/338/responsive/Worms-Zone-io-2-xs.jpg",
+   url:"https://littlebigsnake.com/",
+   desc:"Advanced multiplayer snake with RPG elements. Level up, evolve your snake into different creature forms, unlock cosmetics, and fight for map dominance in richly detailed environments.",
+   ctrl:"Mouse: Guide snake\nBoost: Click or Space\nLevel up to unlock new forms!"},
+  {name:"Tanksmith.io",cat:"io",plays:"1.6M",emoji:"🪖",
+   img:"https://www.onlinegames.io/media/posts/345/Starblast-io-Game.jpg",
+   url:"https://tanksmith.io/",
+   desc:"Build your own tank by attaching weapons, shields, and engines, then battle other custom tanks in a shared arena. The combination of building and fighting is addictive and unique.",
+   ctrl:"WASD: Move\nMouse: Aim\nLClick: Shoot\nBuild your tank in the garage first!"},
+  {name:"Wormate.io",cat:"snake",plays:"5.8M",emoji:"🍩",
+   img:"https://www.onlinegames.io/media/posts/338/responsive/Worms-Zone-io-2-xs.jpg",
+   url:"https://wormate.io/",
+   desc:"Cute multiplayer snake with a twist — eat donuts, cakes, and candy to grow your worm. Boost into rivals, use power-ups, and evolve through multiple worm skin stages. Fun and colorful.",
+   ctrl:"Mouse: Move worm\nLeft Click: Boost (shrinks worm)\nEat sweets, trap rivals!"},
+  {name:"Narwhale.io",cat:"io",plays:"2.1M",emoji:"🐋",
+   img:"https://www.onlinegames.io/media/posts/345/Starblast-io-Game.jpg",
+   url:"https://narwhale.io/",
+   desc:"Stab other narwhals with your horn in this deceptively deep multiplayer IO game. Spin, dodge, and impale opponents — the angle and speed of your charge determines the kill.",
+   ctrl:"Mouse: Move and rotate\nCharge horn into other narwhals\nSpin for better angle!"},
+  {name:"Wings.io",cat:"io",plays:"4.7M",emoji:"✈️",
+   img:"https://www.onlinegames.io/media/posts/345/Starblast-io-Game.jpg",
+   url:"https://wings.io/",
+   desc:"Aerial dogfight IO game. Control a plane, dodge enemy fire, collect powerups, and shoot down as many rivals as possible. Pick up large planes as shields. Fast and surprisingly tactical.",
+   ctrl:"Mouse: Steer plane\nAuto-shoots\nDodge bullets\nCollect powerups\nRam into enemies!"},
+  {name:"Splix.io",cat:"io",plays:"5.4M",emoji:"🟥",
+   img:"https://www.onlinegames.io/media/posts/395/responsive/Paper-io-2-Online-xs.jpg",
+   url:"https://splix.io/",
+   desc:"Territory claiming IO game — one of the originals. Extend from your base, draw loops to claim land, and cut off rivals who venture too far. Classic and endlessly replayable.",
+   ctrl:"Arrow Keys: Move\nClaim land by looping back to your color\nKill rivals by crossing their trail!"},
+  {name:"Surviv.io",cat:"battle-royale",plays:"9.8M",emoji:"💀",
+   img:"https://www.onlinegames.io/media/posts/817/responsive/suroi.io-xs.jpg",
+   url:"https://surviv.io/",
+   desc:"The original 2D battle royale. Drop in, loot buildings, survive the red zone, and be the last player alive. Played by tens of millions — simple top-down format with deep tactical play.",
+   ctrl:"WASD: Move\nMouse: Aim\nLClick: Shoot\nR: Reload\nF: Interact/Loot"},
+  {name:"ZombsRoyale.io",cat:"battle-royale",plays:"6.4M",emoji:"🧟",
+   img:"https://www.onlinegames.io/media/posts/817/responsive/suroi.io-xs.jpg",
+   url:"https://zombsroyale.io/",
+   desc:"Top-down battle royale with 100 players per match. Loot weapons, survive the storm, and eliminate everyone. Colorful art style, fast pace, and frequent updates keep this fresh.",
+   ctrl:"WASD: Move\nMouse: Aim\nLClick: Shoot\nE: Loot\nSurvive the storm!"},
+
+  /* ── EXTRA HORROR GAMES ── */
+  {name:"Granny Chapter 2",cat:"horror",tag:"new",plays:"3.2M",emoji:"👵",
+   img:"https://fnafgames.io/upload/imgs/options/fnaf-games.jpg",
+   url:"https://fnafgames.io/granny-chapter-2.embed",
+   desc:"The terrifying sequel to Granny. Escape a two-story house haunted by both Granny AND Grandpa. They each have unique patterns and hearing ranges — sneak carefully, don't drop anything, and find the exit before 5 days are up.",
+   ctrl:"WASD: Move\nMouse: Look\nE: Interact/Pick up\nShift: Sneak\nDon't make any noise!"},
+  {name:"Slenderman Must Die",cat:"horror",plays:"1.8M",emoji:"🌲",
+   img:"https://fnafgames.io/upload/imgs/options/fnaf-games.jpg",
+   url:"https://fnafgames.io/slenderman-must-die.embed",
+   desc:"Stop running and fight back. Armed with a flashlight and shotgun, hunt Slenderman through dark forests and abandoned facilities. Collect his pages, weaken him, and destroy him once and for all.",
+   ctrl:"WASD: Move\nMouse: Look\nLClick: Shoot\nF: Flashlight\nCollect all 8 pages first!"},
+  {name:"House of Hazards",cat:"horror",plays:"2.4M",emoji:"🏠",
+   img:"https://fnafgames.io/upload/imgs/options/fnaf-games.jpg",
+   url:"https://fnafgames.io/house-of-hazards.embed",
+   desc:"Hilarious and terrifying household horror. Navigate a house where every appliance is trying to kill you. Play solo or with friends to complete chores while dodging falling cabinets, exploding ovens, and sliding rugs.",
+   ctrl:"WASD: Move\nSpace: Jump\nE: Interact\nSurvive all household hazards!"},
+
+  /* ── EXTRA PUZZLE GAMES ── */
+  {name:"2048",cat:"puzzle",plays:"22M",emoji:"🔢",
+   img:"https://www.onlinegames.io/media/posts/152/responsive/love-tester-xs.jpg",
+   url:"https://www.onlinegames.io/games/2019/3/2048/index.html",
+   desc:"The viral number puzzle. Slide tiles to combine matching numbers, creating increasingly large values. Reach 2048 — or keep going beyond. Simple but deeply satisfying strategic tile game.",
+   ctrl:"Arrow Keys: Slide all tiles\nCombine matching numbers\nReach 2048!"},
+  {name:"Tic Tac Toe",cat:"puzzle",plays:"8.4M",emoji:"❌",
+   img:"https://www.onlinegames.io/media/posts/152/responsive/love-tester-xs.jpg",
+   url:"https://www.onlinegames.io/games/2021/3/tic-tac-toe/index.html",
+   desc:"Classic Tic Tac Toe against AI or a friend. Multiple grid sizes and difficulty levels. The perfect quick game between sessions of heavier titles.",
+   ctrl:"Mouse: Click empty square\nGet 3 in a row to win!\n2-player or vs AI"},
+  {name:"Mahjong",cat:"puzzle",plays:"6.7M",emoji:"🀄",
+   img:"https://www.onlinegames.io/media/posts/152/responsive/love-tester-xs.jpg",
+   url:"https://www.onlinegames.io/games/2021/3/mahjong/index.html",
+   desc:"Classic tile-matching Mahjong. Match identical tiles that are free on at least one side. Clear the board without getting stuck. Hundreds of layouts with escalating difficulty.",
+   ctrl:"Mouse: Click matching pairs\nTiles must be free on left or right\nClear the whole board!"},
+  {name:"World Guesser",cat:"puzzle",plays:"2.8M",emoji:"🌍",
+   img:"https://www.onlinegames.io/media/posts/888/world-guesser.jpg",
+   url:"https://cloud.onlinegames.io/games/2024/construct/159/world-guesser/index-og.html",
+   desc:"Geography guessing game inspired by GeoGuessr. A random street-view image appears — guess where in the world it is by clicking on a map. Shorter distance = higher score. Play solo or compete with friends.",
+   ctrl:"Mouse: Look around panorama\nClick on world map to guess\nCloser = more points!"},
+
+  /* ── EXTRA SPORTS GAMES ── */
+  {name:"Penalty Shooters 2",cat:"sports",plays:"5.6M",emoji:"⚽",
+   img:"https://www.onlinegames.io/media/posts/380/Basketball-Stars-Game.jpg",
+   url:"https://www.onlinegames.io/games/2021/construct/5/penalty-shooters-2/index.html",
+   desc:"Tournament-style penalty shootout football game. Choose a team, aim your shots, dive to save penalties, and advance through rounds to win the championship cup. Clean controls, satisfying saves.",
+   ctrl:"Mouse: Aim and set power\nLClick: Shoot/Dive\nTime your dive to save penalties!"},
+  {name:"Head Soccer",cat:"sports",plays:"7.2M",emoji:"⚽",
+   img:"https://www.onlinegames.io/media/posts/380/Basketball-Stars-Game.jpg",
+   url:"https://www.onlinegames.io/games/2019/3/head-soccer/index.html",
+   desc:"Wacky 1v1 soccer with oversized heads and special power shots. Unlock national teams, use character-specific super shots, and score more goals than your opponent in 90 game-seconds.",
+   ctrl:"Arrow Keys: Move\nA: Super shot\nScore more goals to win!\n1 or 2 player"},
+  {name:"Table Tennis World Tour",cat:"sports",plays:"3.8M",emoji:"🏓",
+   img:"https://www.onlinegames.io/media/posts/380/Basketball-Stars-Game.jpg",
+   url:"https://www.onlinegames.io/games/2021/3/table-tennis-world-tour/index.html",
+   desc:"Realistic ping pong simulation. Time your shots precisely, apply topspin and slice, and beat international players in tournament mode. Responsive controls and authentic ball physics.",
+   ctrl:"Mouse: Move paddle\nTime click for topspin\nDirection of swing = direction of shot"},
+
+  /* ── EXTRA ADVENTURE/SIMULATOR GAMES ── */
+  {name:"BitLife Online",cat:"simulator",plays:"14M",emoji:"👶",
+   img:"https://www.onlinegames.io/media/posts/974/responsive/checkout-frenzy-cashier-game-xs.jpg",
+   url:"https://www.onlinegames.io/games/2023/3/bitlife/index.html",
+   desc:"Live an entire virtual life from birth to death. Make choices about school, career, relationships, and crime. Every playthrough is different — become a CEO, criminal, celebrity, or disaster. Wildly addictive.",
+   ctrl:"Mouse: Click choices\nMake life decisions\nEach year ages your character!"},
+  {name:"Paper Minecraft",cat:"adventure",plays:"11M",emoji:"📄",
+   img:"https://www.onlinegames.io/media/posts/722/responsive/Bloxd-io-Play-xs.jpg",
+   url:"https://scratch.mit.edu/projects/10128407/embed",
+   desc:"2D side-scrolling Minecraft built in Scratch. Mine resources, craft items, build shelters, fight mobs at night, and explore caves for diamonds. All the core Minecraft loop in a flat 2D world.",
+   ctrl:"WASD/Arrows: Move\nMouse: Look\nLClick: Mine/Attack\nRClick: Place block\nE: Inventory\n1-9: Hotbar"},
+
+  /* ── EXTRA STICKMAN GAMES ── */
+  {name:"Stickman Warriors",cat:"stickman",plays:"2.4M",emoji:"⚔️",
+   img:"https://www.onlinegames.io/media/posts/871/responsive/stickman-parkour-OG-xs.jpg",
+   url:"https://cloud.onlinegames.io/games/2024/unity/stickman-warriors/index-og.html",
+   desc:"Epic stickman fighting game with sword combat. Chain combos, execute special moves, upgrade your warrior, and battle through 30 levels of increasingly powerful enemies.",
+   ctrl:"WASD: Move\nJ: Light attack\nK: Heavy attack\nL: Block\nSpace: Dodge"},
+  {name:"Stickman Ragdoll",cat:"stickman",plays:"3.1M",emoji:"🤸",
+   img:"https://www.onlinegames.io/media/posts/871/responsive/stickman-parkour-OG-xs.jpg",
+   url:"https://cloud.onlinegames.io/games/2024/unity2/stickman-ragdoll/index-og.html",
+   desc:"Throw your stickman into increasingly destructive scenarios and watch the hilarious ragdoll physics unfold. Set up the perfect launch, aim for high scores, and unlock new stickman characters.",
+   ctrl:"Mouse: Aim direction\nClick + hold: Charge throw\nRelease: Launch stickman!\nHit targets for bonus points"},
+
+  /* ── EXTRA ARCADE GAMES ── */
+  {name:"Geometry Dash",cat:"arcade",tag:"top",plays:"18M",emoji:"🔷",
+   img:"https://www.onlinegames.io/media/posts/1265/responsive/velocity-rush-xs.webp",
+   url:"https://www.onlinegames.io/games/2022/3/geometry-dash/index.html",
+   desc:"The legendary rhythm platformer. Jump and fly through geometric obstacle courses synced perfectly to music. One hit = restart from zero. Hundreds of user-created levels. Brutally addictive.",
+   ctrl:"Space/Click: Jump\nHold for ship sections\nDouble-tap for double jump\nPerfect timing is everything!"},
+  {name:"Cookie Clicker",cat:"arcade",plays:"25M",emoji:"🍪",
+   img:"https://www.onlinegames.io/media/posts/184/responsive/Stack-Fire-Ball-Game-xs.jpg",
+   url:"https://orteil.dashnet.org/cookieclicker/",
+   desc:"The original idle clicking game. Click the cookie to produce cookies, then spend them on grandmas, farms, factories, and interdimensional cookie megastructures. Still the king of idle games after a decade.",
+   ctrl:"Click cookie: Produce cookies\nClick upgrades: Unlock multipliers\nUnlock achievements\nJust keep clicking..."},
+  {name:"Slope",cat:"arcade",tag:"top",plays:"20M",emoji:"⬇️",
+   img:"https://www.onlinegames.io/media/posts/1265/responsive/velocity-rush-xs.webp",
+   url:"https://www.onlinegames.io/games/2020/3/slope/index.html",
+   desc:"Roll a ball down an endless 3D slope at insane speed without falling off. React instantly to curving edges, ramps, and gaps. One of the most played browser games ever — simple and brutally hard.",
+   ctrl:"Left/Right Arrow or A/D: Steer\nDon't fall off the edge!\nSpeed increases over time"},
+
+  /* ── PUZZLE ── */
+  {name:"Brain Puzzle",cat:"puzzle",plays:"870K",emoji:"🧩",
+   img:"https://www.onlinegames.io/media/posts/184/responsive/Stack-Fire-Ball-Game-xs.jpg",
+   url:"https://www.onlinegames.io/games/2021/unity/stack-fire-ball/index.html",
+   desc:"Drop a blazing fireball through a spinning tower. Smash through colored layers while avoiding black death tiles. Simple, satisfying, and brutally addictive arcade fun.",
+   ctrl:"Click/Tap: Drop ball\nSpin tower to aim\nAvoid black tiles!"},
+  {name:"Love Tester",cat:"puzzle",plays:"2.1M",emoji:"💘",
+   img:"https://www.onlinegames.io/media/posts/152/responsive/love-tester-xs.jpg",
+   url:"https://www.onlinegames.io/games/2021/3/love-tester/index.html",
+   desc:"Type in two names and test your love compatibility! The ultimate casual web game that's been around forever. Fun, funny, infinitely shareable.",
+   ctrl:"Type two names\nClick Test button\nShare results!"},
+
+  /* ── HORROR ── */
+  {name:"Five Nights at Freddy's",cat:"horror",tag:"horror",plays:"12M",emoji:"🐻",
+   img:"https://iogames.onl/upload/imgs/fnaf-game.jpg",
+   url:"https://iogames.onl/fnaf.embed",
+   desc:"You are the night security guard at Freddy Fazbear's Pizza. The animatronics come alive after dark and hunt you. Use cameras, shut doors, manage your power — survive all 5 nights if you dare.",
+   ctrl:"Mouse: Look/click\nCamera: Check cams\nLeft/Right doors: Shut to block\n⚠️ Manage your power!"},
+  {name:"FNAF Unblocked",cat:"horror",tag:"hot",plays:"9.8M",emoji:"🍕",
+   img:"https://fnafgames.io/upload/imgs/fnaf6.png",
+   url:"https://fnafgames.io/fnaf-unblocked.embed",
+   desc:"The legendary survival horror game where every second counts. Take the night shift at the pizzeria, watch the cameras, conserve power, and make it to 6AM without being caught by the animatronics.",
+   ctrl:"Mouse: Look/click\nCamera button: Check cams\nDoor buttons: Shut to block\n⚠️ Power runs out — use it wisely!"},
+  {name:"FNAF 5: Sister Location",cat:"horror",plays:"3.4M",emoji:"🎪",
+   img:"https://fnafgames.io/upload/imgs/fnaf-5.jpg",
+   url:"https://fnafgames.io/fnaf-5.embed",
+   desc:"One of the most unique installments in the FNAF series. Navigate a vertical underground facility, control the animatronics remotely, and uncover the unsettling story of Circus Baby's Entertainment and Rentals.",
+   ctrl:"Mouse: Interact\nFollow on-screen prompts\nManage systems carefully"},
+  {name:"FNAF 7: Ultimate Custom Night",cat:"horror",plays:"2.7M",emoji:"🎭",
+   img:"https://fnafgames.io/upload/imgs/options/fnaf-games.jpg",
+   url:"https://fnafgames.io/fnaf-7-ultimate-custom-night.embed",
+   desc:"Face off against 50 different animatronics from across the entire FNAF series at once. Customize the difficulty of every single character and see how long you can last in the ultimate survival challenge.",
+   ctrl:"Mouse: Cameras/doors/systems\nCustomize difficulty before starting\nSurvive as long as possible"},
+  {name:"FNAF 8: Security Breach",cat:"horror",tag:"new",plays:"4.1M",emoji:"🏢",
+   img:"https://fnafgames.io/upload/imgs/options/fnaf-games.jpg",
+   url:"https://fnafgames.io/fnaf-8.embed",
+   desc:"Explore a massive glamrock-themed entertainment complex at night as Gregory, hiding from hostile animatronics until morning. A full free-roam horror experience, browser-based.",
+   ctrl:"WASD: Move\nMouse: Look\nShift: Sprint\nHide in lockers/vents when chased"},
+  {name:"Five Nights At Freddy's 4",cat:"horror",plays:"2.9M",emoji:"🛏️",
+   img:"https://fnafgames.io/upload/imgs/options/fnaf-games.jpg",
+   url:"https://fnafgames.io/five-nights-at-freddys-4.embed",
+   desc:"Set in a child's bedroom, this entry strips away the cameras entirely. Listen carefully for breathing and footsteps in the dark, and check your doors and bed before it's too late.",
+   ctrl:"Mouse: Check doors/closet/bed\nListen for audio cues\nNo cameras — sound is everything"},
+  {name:"Five Nights At Freddy's 3",cat:"horror",plays:"2.2M",emoji:"📺",
+   img:"https://fnafgames.io/upload/imgs/options/fnaf-games.jpg",
+   url:"https://fnafgames.io/five-nights-at-freddys-3.embed",
+   desc:"Decades after the original pizzeria closed, a horror attraction based on the urban legend reopens. Only one animatronic stalks the vents this time — but it's relentless.",
+   ctrl:"Mouse: Cameras/audio lure/reboot systems\nVent into camera rooms to push it back"},
+  {name:"FNAF Plus",cat:"horror",tag:"new",plays:"1.9M",emoji:"🌙",
+   img:"https://fnafgames.io/upload/imgs/options/fnaf-games.jpg",
+   url:"https://fnafgames.io/fnaf-plus.embed",
+   desc:"A fan-made reimagining of the original Five Nights at Freddy's, rebuilt with modern visuals and updated animatronic behavior while keeping the classic night-shift tension intact.",
+   ctrl:"Mouse: Look/click\nCamera + doors to survive\nManage your power"},
+  {name:"Five Nights At Freddy's: Sister Location",cat:"horror",plays:"1.6M",emoji:"🎈",
+   img:"https://fnafgames.io/upload/imgs/options/fnaf-games.jpg",
+   url:"https://fnafgames.io/five-nights-at-freddys-sister-location.embed",
+   desc:"The full original Sister Location experience — descend into Circus Baby's underground facility and survive whatever waits below.",
+   ctrl:"Mouse: Interact with systems\nFollow each night's unique objective"},
+  {name:"Security Breach",cat:"horror",plays:"2.4M",emoji:"🔓",
+   img:"https://fnafgames.io/upload/imgs/options/fnaf-games.jpg",
+   url:"https://fnafgames.io/security-breach.embed",
+   desc:"Locked inside a sprawling entertainment plaza overnight, you must survive roaming animatronics while exploring every corner of the building looking for a way out.",
+   ctrl:"WASD: Move\nMouse: Look\nHide and sneak past animatronics"},
+  {name:"Those Nights at Fredbear's",cat:"horror",plays:"1.1M",emoji:"🧸",
+   img:"https://fnafgames.io/upload/imgs/options/fnaf-games.jpg",
+   url:"https://fnafgames.io/those-nights-at-fredbears.embed",
+   desc:"A beloved fan-made prequel exploring the earliest days of Fredbear's Family Diner, long before the events of the original FNAF. Classic mechanics, new lore.",
+   ctrl:"Mouse: Cameras/doors\nSurvive each night's pattern"},
+  {name:"One Night at Flumpty's 2",cat:"horror",plays:"980K",emoji:"🥚",
+   img:"https://fnafgames.io/upload/imgs/options/fnaf-games.jpg",
+   url:"https://fnafgames.io/one-night-at-flumptys-2.embed",
+   desc:"The chaotic, comedic FNAF-parody sequel. Survive a night against Flumpty Bumpty and his bizarre cast of egg-themed horrors using an arsenal of strange defensive tools.",
+   ctrl:"Mouse: Use tools at your desk\nReact fast to each threat"},
+  {name:"Undead Corridor",cat:"horror",tag:"new",plays:"720K",emoji:"🧟",
+   img:"https://fnafgames.io/upload/imgs/options/fnaf-games.jpg",
+   url:"https://fnafgames.io/undead-corridor.embed",
+   desc:"A tense corridor-survival shooter. Hold your ground against waves of undead pressing in from both ends of a narrow hallway. Simple to learn, relentless to survive.",
+   ctrl:"Mouse: Aim\nClick: Shoot\nWatch both ends of the corridor!"},
+  {name:"Dead Plate",cat:"horror",tag:"new",plays:"640K",emoji:"🍽️",
+   img:"https://fnafgames.io/upload/imgs/options/fnaf-games.jpg",
+   url:"https://fnafgames.io/dead-plate.embed",
+   desc:"A surreal horror-cooking hybrid. Serve unsettling customers in a restaurant where something is clearly very wrong, and every order could be your last.",
+   ctrl:"Mouse: Click to interact\nFollow each customer's orders carefully"},
+  {name:"No, I'm Not a Human",cat:"horror",plays:"1.3M",emoji:"🚪",
+   img:"https://fnafgames.io/upload/imgs/options/fnaf-games.jpg",
+   url:"https://fnafgames.io/no-im-not-a-human.embed",
+   desc:"A tense door-answering horror game. Strangers knock at night during a sinister outbreak — let in the wrong visitor and you won't survive til morning.",
+   ctrl:"Mouse: Inspect visitors\nClick to let in or turn away\nLook for the signs!"},
+  {name:"Finding Frankie",cat:"horror",plays:"540K",emoji:"🔍",
+   img:"https://fnafgames.io/upload/imgs/options/fnaf-games.jpg",
+   url:"https://fnafgames.io/finding-frankie.embed",
+   desc:"A point-and-click horror mystery. Search a decaying building for clues about a missing mascot named Frankie — and the disturbing truth behind his disappearance.",
+   ctrl:"Mouse: Click to explore/interact\nSearch every room for clues"},
+  {name:"Exhibit of Sorrows",cat:"horror",plays:"480K",emoji:"🖼️",
+   img:"https://fnafgames.io/upload/imgs/options/fnaf-games.jpg",
+   url:"https://fnafgames.io/exhibit-of-sorrows.embed",
+   desc:"Wander a haunted museum exhibit after hours. Each room hides something that shouldn't be looked at directly. Atmospheric, slow-burn horror.",
+   ctrl:"WASD: Move\nMouse: Look\nAvoid certain exhibits at all costs"},
+  {name:"They Are Coming",cat:"horror",plays:"610K",emoji:"👁️",
+   img:"https://fnafgames.io/upload/imgs/options/fnaf-games.jpg",
+   url:"https://fnafgames.io/they-are-coming.embed",
+   desc:"A wave-based survival horror game where increasingly dangerous threats close in from the darkness. Manage limited resources and barricades to last the night.",
+   ctrl:"Mouse: Manage barricades/resources\nSurvive each escalating wave"},
+
+  /* ── SIMULATOR ── */
+  {name:"Checkout Frenzy",cat:"simulator",tag:"new",plays:"820K",emoji:"🛒",
+   img:"https://www.onlinegames.io/media/posts/974/responsive/checkout-frenzy-cashier-game-xs.jpg",
+   url:"https://cloud.onlinegames.io/games/2025/unity/checkout-frenzy/index-og.html",
+   desc:"Work as a cashier in this frantic store simulator. Scan items, manage queues, and keep customers happy before the line spirals out of control.",
+   ctrl:"Mouse: Click to scan items\nManage your checkout lane\nKeep the queue moving!"},
+  {name:"Slow Roads",cat:"simulator",plays:"3.6M",emoji:"🛣️",
+   img:"https://www.onlinegames.io/media/posts/725/responsive/Slow-Roads-io-Play-xs.jpg",
+   url:"https://slowroads.io/",
+   desc:"Infinitely generated scenic roads to drive through at your own pace. No rules, no goals, no stress. A beautiful, meditative driving experience. Perfect for unwinding.",
+   ctrl:"WASD/Arrows: Steer\nAdjust speed in menu\nJust enjoy the drive…"},
+
+  /* ── ADVENTURE ── */
+  {name:"Mine Explorer",cat:"adventure",plays:"1.6M",emoji:"⛏️",
+   img:"https://www.onlinegames.io/media/posts/184/responsive/Stack-Fire-Ball-Game-xs.jpg",
+   url:"https://www.onlinegames.io/games/2021/unity/stack-fire-ball/index.html",
+   desc:"Dig deep, avoid traps, collect treasure and upgrade your miner. A classic browser adventure with increasing difficulty and rewarding loot cycles.",
+   ctrl:"Arrows: Move\nSpace: Jump\nCollect gems and avoid danger!"},
+  {name:"Minecraft (Eaglercraft 1.8)",cat:"adventure",tag:"top",plays:"50M+",emoji:"🌿",
+   img:"https://www.onlinegames.io/media/posts/722/responsive/Bloxd-io-Play-xs.jpg",
+   url:"https://eaglercraftfree.github.io/eaglercraft",
+   desc:"The real Minecraft — fully playable in your browser. Full survival mode, creative mode, hardcore, The Nether, The End, villages, dungeons, caves, all biomes, and real multiplayer servers. Saves worlds locally in your browser. Works on Chromebooks, phones, tablets, and any device. No download, no account, no cost.",
+   ctrl:"WASD: Move\nMouse: Look around\nLeft Click: Break blocks\nRight Click: Place blocks\nE: Inventory\nQ: Drop item\nShift: Sneak\nSpace: Jump\n1-9: Hotbar slots"},
+  {name:"Minecraft Classic",cat:"adventure",plays:"10M+",emoji:"🟫",
+   img:"https://data.gameflare.com/games/9019/f7Fqcxb54GSxEu-400-300.jpg",
+   url:"https://classic.minecraft.net/",
+   desc:"The official original Minecraft released free by Mojang for the game's 10th anniversary. Pure creative sandbox with classic blocks — no survival, no mobs, just pure block building the way it all started in 2009. The nostalgia is real.",
+   ctrl:"WASD: Move\nMouse: Look\nLeft Click: Break block\nRight Click: Place block\nB: Block picker\nSpace: Jump\nF: Toggle fog"},
+  {name:"Tribals io",cat:"adventure",plays:"1.4M",emoji:"🏕️",
+   img:"https://www.onlinegames.io/media/posts/640/responsive/Tribals.io-xs.jpg",
+   url:"https://tribals.io/",
+   desc:"Survival crafting IO game. Gather resources, build shelters, craft weapons, and form alliances — or betray them. One of the most deep browser survival games available.",
+   ctrl:"WASD: Move\nMouse: Look\nLeft Click: Attack/Interact\nRight Click: Build menu"},
+  {name:"Golf Bit",cat:"sports",tag:"new",plays:"760K",emoji:"⛳",
+   img:"https://www.onlinegames.io/media/posts/1289/responsive/golf-bit-xs.webp",
+   url:"https://cloud.onlinegames.io/games/2026/construct/328/golf-bit/game.html",
+   desc:"Precise online golf. Aim your shot, time your swing on the moving indicator, and sink every hole. Clean visuals, satisfying putts.",
+   ctrl:"Mouse: Aim\nClick: Set power\nTime the moving indicator!"},
+  {name:"Velocity Rush",cat:"arcade",tag:"new",plays:"540K",emoji:"⚡",
+   img:"https://www.onlinegames.io/media/posts/1265/responsive/velocity-rush-xs.webp",
+   url:"https://cloud.onlinegames.io/games/2026/unity/velocity-rush/game.html",
+   desc:"Control a ball through high-speed obstacle courses. Pure reflexes and agility — one mistake and you restart. Fast, intense, addictive.",
+   ctrl:"WASD/Arrows: Move\nDodge all obstacles\nReach the finish line!"},
+  {name:"Waterpark Slide io",cat:"io",plays:"2.7M",emoji:"🌊",
+   img:"https://www.onlinegames.io/media/posts/1060/responsive/waterpark-slide-io-xs.jpg",
+   url:"https://www.onlinegames.io/games/2024/construct/214/waterpark-slide-io/index.html",
+   desc:"Race down a massive waterpark slide against other players. Stay on the slide, build speed, and reach the splash pool first. Chaotic waterpark multiplayer fun.",
+   ctrl:"Mouse/Arrows: Steer\nStay on the slide!\nReach the bottom first"},
+  {name:"Dino Evolution io",cat:"io",plays:"1.9M",emoji:"🦖",
+   img:"https://www.onlinegames.io/media/posts/995/responsive/Dino-Evolution-io-xs.jpg",
+   url:"https://dinoevolution.io/",
+   desc:"Start as a tiny dino and evolve through multiple dinosaur forms by eating food and surviving. A fresh spin on evolution IO games with prehistoric flair.",
+   ctrl:"WASD/Mouse: Move\nEat food to evolve\nAvoid larger dinos!"},
+  {name:"Conquer IO",cat:"io",plays:"1.2M",emoji:"🏰",
+   img:"https://www.onlinegames.io/media/posts/1175/responsive/conquer-io-xs.jpg",
+   url:"https://www.onlinegames.io/games/2024/construct/215/conquer-io/index.html",
+   desc:"Real-time strategy IO. Send troops to capture towers, build an army, and take over the entire map. Simple drag mechanics, deep tactical decisions.",
+   ctrl:"Click tower to select\nDrag to attack!\nCapture all towers to win"},
+  {name:"Brawl Stars",cat:"multiplayer",tag:"hot",plays:"22M",emoji:"⭐",
+   img:"https://www.onlinegames.io/media/posts/1297/responsive/brawl-stars-xs.jpg",
+   url:"https://brawlstars.com/",
+   desc:"The hit mobile game — now in your browser! Pick a Brawler, fight in 3v3 team battles, gem grabs, and showdowns. Fast-paced action with a massive roster of characters.",
+   ctrl:"WASD: Move\nMouse: Aim\nClick: Attack\nRClick/Space: Super attack"},
+  {name:"Suroi io",cat:"battle-royale",plays:"2.4M",emoji:"💀",
+   img:"https://www.onlinegames.io/media/posts/817/responsive/suroi.io-xs.jpg",
+   url:"https://suroi.io/",
+   desc:"Top-down battle royale with smooth controls. Drop in, scavenge weapons, and eliminate every player on a shrinking map. One of the best browser battle royale games.",
+   ctrl:"WASD: Move\nMouse: Aim\nClick: Shoot\nR: Reload\nF: Interact/Pickup"},
+  {name:"The Last io",cat:"battle-royale",plays:"1.6M",emoji:"☠️",
+   img:"https://www.onlinegames.io/media/posts/915/responsive/The-last-io-xs.jpg",
+   url:"https://thelast.io/",
+   desc:"Top-down battle royale survival. Loot buildings, craft items, and fight to be the last survivor on the map. Deep crafting system and strong community.",
+   ctrl:"WASD: Move\nMouse: Aim\nClick: Attack\nLoot and craft to survive!"},
+];
+
+/* ── RENDER ── */
+let activeCat='all', searchQ='';
+
+function getBadge(g){
+  if(g.tag==='hot') return '<span class="hot-tag">🔥 HOT</span>';
+  if(g.tag==='new') return '<span class="new-tag">✨ NEW</span>';
+  if(g.tag==='top') return '<span class="top-tag">👑 TOP</span>';
+  if(g.tag==='horror') return '<span class="horror-tag">👻 HORROR</span>';
+  return '';
+}
+
+function renderGames(){
+  const grid=document.getElementById('gamesGrid');
+  const noRes=document.getElementById('no-results');
+  const count=document.getElementById('countBadge');
+  let list=GAMES.filter(g=>{
+    const matchCat=activeCat==='all'||g.cat===activeCat||(activeCat==='gogoman'&&g.dev==='gogoman');
+    const matchQ=!searchQ||g.name.toLowerCase().includes(searchQ)||g.cat.includes(searchQ)||g.desc.toLowerCase().includes(searchQ);
+    return matchCat&&matchQ;
+  });
+  grid.innerHTML='';
+  document.getElementById('noTerm').textContent=searchQ;
+  noRes.style.display=list.length===0?'block':'none';
+  count.textContent=list.length+' game'+(list.length!==1?'s':'');
+  list.forEach((g,i)=>{
+    const card=document.createElement('div');
+    card.className='game-card';
+    card.style.animationDelay=(i%12)*38+'ms';
+    card.innerHTML=`<div class="thumb">${getBadge(g)}<img src="${g.img}" alt="${g.name}" loading="lazy" onerror="this.parentElement.style.background='linear-gradient(135deg,#161b27,#0d1117)';this.style.display='none'"><div class="thumb-overlay"><div class="play-ico">▶</div></div></div><div class="game-info"><div class="game-name">${g.emoji} ${g.name}</div><div class="game-meta"><span class="game-tag">${g.cat}</span><span class="plays">👁 ${g.plays}</span></div></div>`;
+    card.addEventListener('click',()=>openGame(g));
+    grid.appendChild(card);
+  });
+}
+renderGames();
+
+/* ── CATEGORY FILTER ── */
+document.getElementById('catsWrap').addEventListener('click',e=>{
+  const btn=e.target.closest('.cat-btn');
+  if(!btn)return;
+  document.querySelectorAll('.cat-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  activeCat=btn.dataset.cat;
+  document.getElementById('secTitle').textContent=activeCat==='all'?'All Games':btn.textContent.trim()+' Games';
+  renderGames();
+});
+
+/* ── NAV ── */
+document.querySelectorAll('[data-nav]').forEach(a=>{
+  a.addEventListener('click',e=>{
+    e.preventDefault();
+    document.querySelectorAll('[data-nav]').forEach(x=>x.classList.remove('active'));
+    a.classList.add('active');
+    activeCat=a.dataset.nav;
+    document.querySelectorAll('.cat-btn').forEach(b=>b.classList.toggle('active',b.dataset.cat===activeCat));
+    document.getElementById('secTitle').textContent=activeCat==='all'?'All Games':a.textContent.trim()+' Games';
+    renderGames();
+    window.scrollTo({top:0,behavior:'smooth'});
+  });
+});
+
+/* ── SEARCH (live game filter) ── */
+document.getElementById('searchInput').addEventListener('input',e=>{
+  searchQ=e.target.value.toLowerCase().trim();
+  activeCat='all';
+  document.querySelectorAll('.cat-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelector('[data-cat="all"]').classList.add('active');
+  document.getElementById('secTitle').textContent=searchQ?`Results for "${searchQ}"`: 'All Games';
+  renderGames();
+});
+
+/* ── WEB SEARCH PANEL (in-site results) ── */
+const wsp = document.getElementById('webSearchPanel');
+const wspBody = document.getElementById('wspBody');
+const wspQuery = document.getElementById('wspQuery');
+
+function openWebSearch(){
+  const q = document.getElementById('searchInput').value.trim();
+  if(!q) return;
+  wspQuery.textContent = q;
+  wspBody.innerHTML = '<div class="wsp-loading"><div class="spinner"></div><span>Searching…</span></div>';
+  wsp.classList.add('open');
+  document.body.style.overflow = 'hidden';
+  runWebSearch(q);
+}
+
+function closeWebSearch(){
+  wsp.classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+async function runWebSearch(q){
+  try{
+    const res = await fetch('https://api.duckduckgo.com/?q='+encodeURIComponent(q)+'&format=json&no_html=1&skip_disambig=1&t=neonarcade');
+    const data = await res.json();
+    renderWebSearch(q, data);
+  }catch(err){
+    wspBody.innerHTML = `
+      <div class="wsp-empty">
+        <p>⚠️ Couldn't reach the search service right now.</p>
+        <a class="wsp-fulllink" href="https://duckduckgo.com/?q=${encodeURIComponent(q)}" target="_blank" rel="noopener">🦆 Open full results on DuckDuckGo →</a>
+      </div>`;
+  }
+}
+
+function renderWebSearch(q, data){
+  let html = '';
+  const hasAnswer = data.AbstractText || data.Answer || data.Definition;
+
+  if(hasAnswer){
+    const title = data.Heading || q;
+    const text = data.AbstractText || data.Answer || data.Definition || '';
+    const img = data.Image ? (data.Image.startsWith('http') ? data.Image : 'https://duckduckgo.com'+data.Image) : '';
+    const sourceUrl = data.AbstractURL || data.DefinitionURL || '';
+    const sourceName = data.AbstractSource || data.DefinitionSource || 'Source';
+    html += `<div class="wsp-answer">
+      ${img ? `<img src="${img}" alt="">` : ''}
+      <div class="wsp-answer-text">
+        <h3>${title}</h3>
+        <p>${text}</p>
+        ${sourceUrl ? `<a href="${sourceUrl}" target="_blank" rel="noopener">View on ${sourceName} →</a>` : ''}
+      </div>
+    </div>`;
+  }
+
+  if(data.RelatedTopics && data.RelatedTopics.length){
+    html += '<div class="wsp-related-title">Related</div>';
+    let shown = 0;
+    for(const item of data.RelatedTopics){
+      if(shown >= 8) break;
+      if(item.Text && item.FirstURL){
+        const parts = item.Text.split(' - ');
+        const name = parts[0];
+        const rest = parts.slice(1).join(' - ');
+        html += `<a class="wsp-related-item" href="${item.FirstURL}" target="_blank" rel="noopener"><b>${name}</b>${rest ? ' — '+rest : ''}</a>`;
+        shown++;
+      } else if(item.Topics){
+        for(const sub of item.Topics){
+          if(shown >= 8) break;
+          if(sub.Text && sub.FirstURL){
+            const parts = sub.Text.split(' - ');
+            const name = parts[0];
+            const rest = parts.slice(1).join(' - ');
+            html += `<a class="wsp-related-item" href="${sub.FirstURL}" target="_blank" rel="noopener"><b>${name}</b>${rest ? ' — '+rest : ''}</a>`;
+            shown++;
+          }
+        }
+      }
+    }
+  }
+
+  if(!hasAnswer && (!data.RelatedTopics || !data.RelatedTopics.length)){
+    html += `<div class="wsp-empty">
+      <p>No instant answer for "${q}" — this quick-search box only shows summary facts, not full web listings.</p>
+      <a class="wsp-fulllink" href="https://duckduckgo.com/?q=${encodeURIComponent(q)}" target="_blank" rel="noopener">🦆 See full results on DuckDuckGo →</a>
+    </div>`;
+  } else {
+    html += `<div class="wsp-footer-link"><a class="wsp-fulllink" href="https://duckduckgo.com/?q=${encodeURIComponent(q)}" target="_blank" rel="noopener">🦆 See full results on DuckDuckGo →</a></div>`;
+  }
+
+  wspBody.innerHTML = html;
+}
+
+document.getElementById('ddgBtn').addEventListener('click', openWebSearch);
+document.getElementById('searchInput').addEventListener('keydown', e=>{
+  if(e.key==='Enter') openWebSearch();
+});
+document.getElementById('wspClose').addEventListener('click', closeWebSearch);
+wsp.addEventListener('click', e=>{ if(e.target===wsp) closeWebSearch(); });
+document.addEventListener('keydown', e=>{ if(e.key==='Escape' && wsp.classList.contains('open')) closeWebSearch(); });
+
+/* ── GAME MODAL ── */
+const overlay=document.getElementById('modalOverlay');
+const frame=document.getElementById('gameFrame');
+const loading=document.getElementById('iframeLoading');
+
+function openGame(g){
+  document.getElementById('modalTitle').textContent=g.name;
+  document.getElementById('modalIcon').textContent=g.emoji;
+  document.getElementById('modalCat').textContent=g.cat;
+  document.getElementById('modalDesc').textContent=g.desc;
+  document.getElementById('modalControls').textContent='🎮 Controls\n'+g.ctrl;
+  loading.style.opacity='1';loading.style.pointerEvents='all';
+  frame.src='';
+  overlay.classList.add('open');
+  document.body.style.overflow='hidden';
+  setTimeout(()=>{frame.src=g.url;},280);
+  frame.onload=()=>{loading.style.opacity='0';loading.style.pointerEvents='none';};
+}
+function closeGame(){
+  overlay.classList.remove('open');
+  document.body.style.overflow='';
+  setTimeout(()=>{frame.src='';},300);
+}
+document.getElementById('btnClose').addEventListener('click',closeGame);
+overlay.addEventListener('click',e=>{if(e.target===overlay)closeGame();});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeGame();});
+document.getElementById('btnFullscreen').addEventListener('click',()=>{
+  const el=document.getElementById('iframeWrap');
+  if(el.requestFullscreen)el.requestFullscreen();
+  else if(el.webkitRequestFullscreen)el.webkitRequestFullscreen();
+});
+</script>
+</body>
+</html>
